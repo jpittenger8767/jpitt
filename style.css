@@ -40,6 +40,19 @@ ul li {
     margin: 10px 0;
 }
 
+ JP_02_19_25_addingInfo
+section {
+    margin-bottom: 40px;
+}
+
+h2 {
+    border-bottom: 2px solid #ffffff;
+    padding-bottom: 5px;
+    display: inline-block;
+}
+
+
+ main
 .project {
     display: flex;
     align-items: center;
