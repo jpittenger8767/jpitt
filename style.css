@@ -39,3 +39,14 @@ ul {
 ul li {
     margin: 10px 0;
 }
+
+.project {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.project img {
+    border-radius: 10px;
+    margin-right: 15px;
+}
