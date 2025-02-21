@@ -115,12 +115,14 @@ h2 {
 .slide {
     width: 100%;
     position: absolute;
+    top: 0;
+    left: 0;
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 1s ease-in-out;
 }
 
-.slide.active {
-    opacity: 1;
+.slide:first-child {
+    opacity: 1;  /* Ensure the first image is visible on load */
 }
 
 .bio-text {
@@ -147,7 +149,6 @@ h2 {
         max-width: 90%; /* Allows resizing on mobile */
     }
 }
-
 
 /* Animations */
 @keyframes fadeInUp {

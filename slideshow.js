@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", function () {
     function showSlide(index) {
         slides.forEach((slide, i) => {
             slide.style.opacity = i === index ? "1" : "0";
+            slide.style.position = i === index ? "relative" : "absolute"; // Ensures only one image is interactive
         });
     }
 
