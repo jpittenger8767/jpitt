@@ -90,55 +90,64 @@ h2 {
 .bio-container {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
-    gap: 20px;
-    padding: 20px;
+    gap: 40px;
+    padding: 40px 20px;
 }
 
 .bio-image {
     flex: 1;
-    min-width: 250px;
+    min-width: 300px;
     text-align: center;
 }
 
 .slideshow {
     position: relative;
     width: 100%;
-    max-width: 300px;
+    max-width: 350px;
     height: auto;
     overflow: hidden;
     border-radius: 10px;
+    margin-bottom: 20px;
 }
 
 .slide {
     width: 100%;
-    display: none;
+    position: absolute;
+    opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }
 
 .slide.active {
-    display: block;
     opacity: 1;
 }
 
 .bio-text {
     flex: 2;
-    min-width: 300px;
-    text-align: left;
+    min-width: 350px;
     max-width: 600px;
+    text-align: left;
+    line-height: 1.6;
 }
 
+/* Mobile Styles */
 @media (max-width: 768px) {
     .bio-container {
         flex-direction: column;
+        align-items: center;
         text-align: center;
     }
-    
+
     .bio-text {
         text-align: center;
     }
+
+    .slideshow {
+        max-width: 90%; /* Allows resizing on mobile */
+    }
 }
+
 
 /* Animations */
 @keyframes fadeInUp {
