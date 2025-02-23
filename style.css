@@ -89,23 +89,21 @@ h2 {
 
 .bio-container {
     display: flex;
-    flex-wrap: wrap;
-    align-items: flex-start;
+    align-items: center;
     justify-content: center;
-}
-
-.bio-image {
-    flex: 1;
-    min-width: 300px;
-    text-align: center;
+    gap: 20px;
+    max-width: 800px; /* Ensures the content doesn't stretch too wide */
+    margin: 0 auto;
 }
 
 .bio-text {
-    flex: 2;
-    min-width: 350px;
-    max-width: 600px;
+    flex: 1; /* Allows the text to take up available space */
     text-align: left;
-    line-height: 1.6;
+}
+
+.bio-image img {
+    width: 150px; /* Adjust image size */
+    border-radius: 10px;
 }
 
 /* Mobile Styles */
