@@ -92,7 +92,7 @@ h2 {
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: center;
-    gap: 40px;
+    gap: 20px;
     padding: 40px 20px;
 }
 
@@ -102,28 +102,6 @@ h2 {
     text-align: center;
 }
 
-.slideshow {
-    position: relative;
-    width: 100%;
-    max-width: 350px;
-    height: auto;
-    overflow: hidden;
-    border-radius: 10px;
-    margin-bottom: 20px;
-}
-
-.slide {
-    width: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    opacity: 0;
-    transition: opacity 1s ease-in-out;
-}
-
-.slide:first-child {
-    opacity: 1;  /* Ensure the first image is visible on load */
-}
 
 .bio-text {
     flex: 2;
