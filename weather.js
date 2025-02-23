@@ -20,7 +20,7 @@ async function fetchWeather() {
         const weatherCode = data.data.values.weatherCode;
         const description = getWeatherDescription(weatherCode);
 
-        document.getElementById("weather-location").textContent = `📍 Mayville, ND`;
+        document.getElementById("weather-location").textContent = `📍 Mayville, MI`;
         document.getElementById("temperature").textContent = `🌡 Temperature: ${tempFahrenheit.toFixed(1)}°F`;
         document.getElementById("description").textContent = `🌤 Condition: ${description}`;
     } catch (error) {
@@ -57,10 +57,6 @@ function getWeatherDescription(code) {
     };
     return weatherDescriptions[code] || "Unknown Weather";
 }
-
-// Run function on page load
-fetchWeather();
-
 
 
 function initRadarMap() {
