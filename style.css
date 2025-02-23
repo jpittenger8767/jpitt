@@ -89,9 +89,10 @@ h2 {
 
 .bio-weather-container {
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px; /* Adds spacing between bio and weather */
+    align-items: center; /* Aligns items vertically */
+    justify-content: flex-start; /* Aligns content to the left */
+    gap: 40px; /* Adds spacing between bio and weather */
+    flex-wrap: wrap; /* Ensures responsiveness on smaller screens */
 }
 
 .bio-container {
@@ -111,8 +112,9 @@ h2 {
     border-radius: 10px;
     text-align: center;
     min-width: 200px;
+    max-width: 250px;
+    flex-shrink: 0; /* Prevents it from shrinking too much */
 }
-
 
 .bio-text {
     flex: 1; /* Ensures text takes up remaining space */
