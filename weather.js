@@ -1,26 +1,28 @@
-const apiKey = "HRZ5a3Q9lUUavq65gfAqmsobzvtXFmLW";  // Replace with your Tomorrow.io API key
-const location = "Lapeer";  // Change to your preferred city
-
-const weatherApiUrl = `https://api.tomorrow.io/v4/weather/realtime?location=${location}&apikey=${HRZ5a3Q9lUUavq65gfAqmsobzvtXFmLW}`;
+const API_KEY = "HRZ5a3Q9lUUavq65gfAqmsobzvtXFmLW"; // Replace with your actual API key
+const lat = 43.3370; // Mayville latitude
+const lon = 83.3525; // Mayville longitude
 
 async function fetchWeather() {
+    const url = `https://api.tomorrow.io/v4/weather/realtime?location=${lat},${lon}&apikey=${API_KEY}`;
+
     try {
-        const response = await fetch(weatherApiUrl);
-        const data = await response.json();
-
-        if (!data || !data.data || !data.data.values) {
-            throw new Error("Invalid weather data received.");
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
         }
-
-        const weather = data.data.values;
-        document.getElementById("location").textContent = `📍 ${location}`;
-        document.getElementById("temperature").textContent = `🌡️ ${Math.round(weather.temperature)}°F`;
-        document.getElementById("description").textContent = `☁️ Condition: ${weather.weatherCode}`;
+        const data = await response.json();
+        
+        document.getElementById("weather-location").textContent = `📍 Location: ${lat}, ${lon}`;
+        document.getElementById("temperature").textContent = `🌡 Temperature: ${data.data.values.temperature}°C`;
+        document.getElementById("description").textContent = `🌤 Condition: ${data.data.values.weatherCode}`;
     } catch (error) {
-        console.error("Weather fetch error:", error);
-        document.getElementById("location").textContent = "Failed to load weather";
+        console.error("Error fetching weather:", error);
+        document.getElementById("weather-location").textContent = "⚠️ Error loading weather!";
     }
 }
+
+fetchWeather();
+
 
 function initRadarMap() {
     const map = L.map('radar-map').setView([40.7128, -74.0060], 8); // Default: NYC
