@@ -87,17 +87,32 @@ h2 {
     margin-right: 15px;
 }
 
+.bio-weather-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px; /* Adds spacing between bio and weather */
+}
+
 .bio-container {
     display: flex;
-    align-items: center; /* Aligns the image and text vertically */
-    gap: 15px; /* Adjust this value to control spacing between image and text */
-    max-width: 800px;
-    margin: 0 auto;
+    align-items: center;
+    gap: 15px; /* Space between image and text */
 }
 
 .bio-image img {
-    border-radius: 10px; /* Optional: Adds rounded corners to the image */
+    border-radius: 10px; /* Optional: rounded corners */
 }
+
+.weather-widget {
+    background-color: #222; /* Dark theme */
+    color: #fff;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    min-width: 200px;
+}
+
 
 .bio-text {
     flex: 1; /* Ensures text takes up remaining space */
