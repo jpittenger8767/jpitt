@@ -92,8 +92,6 @@ h2 {
     flex-wrap: wrap;
     align-items: flex-start;
     justify-content: center;
-    gap: 20px;
-    padding: 40px 20px;
 }
 
 .bio-image {
@@ -101,7 +99,6 @@ h2 {
     min-width: 300px;
     text-align: center;
 }
-
 
 .bio-text {
     flex: 2;
@@ -121,10 +118,6 @@ h2 {
 
     .bio-text {
         text-align: center;
-    }
-
-    .slideshow {
-        max-width: 90%; /* Allows resizing on mobile */
     }
 }
 
