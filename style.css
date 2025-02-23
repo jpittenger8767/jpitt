@@ -91,7 +91,7 @@ h2 {
     display: flex;
     align-items: center; /* Aligns items vertically */
     justify-content: flex-start; /* Aligns content to the left */
-    gap: 40px; /* Adds spacing between bio and weather */
+    gap: 20px; /* Adds spacing between bio and weather */
     flex-wrap: wrap; /* Ensures responsiveness on smaller screens */
 }
 
