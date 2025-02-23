@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joseph Pittenger</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Leaflet.js for Radar Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 <body>
     <header>
@@ -17,7 +21,6 @@
         </nav>
     </header>
 
-
     <section class="bio-container">
         <div class="bio-image">
             <img src="images/slide1.jpg" alt="Joseph Pittenger" width="200">
@@ -28,16 +31,22 @@
         </div>
     </section>
 
-</head>
-<body>
-    <div class="weather-widget">
+    <!-- Weather Widget -->
+    <section class="weather-widget">
         <h2>Current Weather</h2>
-        <p id="location">Loading...</p>
+        <p id="location">📍 Loading...</p>
         <p id="temperature"></p>
         <p id="description"></p>
-    </div>
+    </section>
+
+    <!-- Radar Map -->
+    <section class="radar-section">
+        <h2>Live Weather Radar</h2>
+        <div id="radar-map" style="width: 100%; height: 400px;"></div>
+    </section>
+
+    <!-- JavaScript Files -->
     <script src="weather.js"></script>
-</body>
 
     <footer>
         <p>© 2025 Joseph Pittenger</p>
