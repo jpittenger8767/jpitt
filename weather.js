@@ -1,6 +1,6 @@
 const API_KEY = "HRZ5a3Q9lUUavq65gfAqmsobzvtXFmLW"; // Replace with your actual API key
 const lat = 43.3370; // Mayville latitude
-const lon = 83.3525; // Mayville longitude
+const lon = -83.3525; // Mayville longitude
 
 async function fetchWeather() {
     const url = `https://api.tomorrow.io/v4/weather/realtime?location=${lat},${lon}&apikey=${API_KEY}`;
@@ -14,6 +14,9 @@ async function fetchWeather() {
 
         const tempCelsius = data.data.values.temperature;
         const tempFahrenheit = (tempCelsius * 9/5) + 32;
+
+        const weatherCode = data.data.values.weatherCode;
+        const description = getWeatherDescription(weatherCode);
         
         document.getElementById("weather-location").textContent = `📍 Location: ${lat}, ${lon}`;
         document.getElementById("temperature").textContent = `🌡 Temperature: ${tempFahrenheit.toFixed(1)}°F`;
@@ -57,7 +60,7 @@ function getWeatherDescription(code) {
 
 
 function initRadarMap() {
-    const map = L.map('radar-map').setView([43.3208, 83.3264], 8); // Mayville, 
+    const map = L.map('radar-map').setView([43.3208, -83.3264], 8); // Mayville, 
 
     // OpenStreetMap base layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
