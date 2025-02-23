@@ -11,14 +11,16 @@ async function fetchWeather() {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
         const data = await response.json();
-
+        
+        // Convert temperature to Fahrenheit
         const tempCelsius = data.data.values.temperature;
         const tempFahrenheit = (tempCelsius * 9/5) + 32;
-
+        
+        // Get weather description
         const weatherCode = data.data.values.weatherCode;
         const description = getWeatherDescription(weatherCode);
-        
-        document.getElementById("weather-location").textContent = `📍 Location: ${lat}, ${lon}`;
+
+        document.getElementById("weather-location").textContent = `📍 Mayville, ND`;
         document.getElementById("temperature").textContent = `🌡 Temperature: ${tempFahrenheit.toFixed(1)}°F`;
         document.getElementById("description").textContent = `🌤 Condition: ${description}`;
     } catch (error) {
@@ -27,8 +29,7 @@ async function fetchWeather() {
     }
 }
 
-fetchWeather();
-
+// Map weather codes to descriptions
 function getWeatherDescription(code) {
     const weatherDescriptions = {
         1000: "Clear Sky",
@@ -54,9 +55,12 @@ function getWeatherDescription(code) {
         7102: "Light Ice Pellets",
         8000: "Thunderstorm"
     };
-
     return weatherDescriptions[code] || "Unknown Weather";
 }
+
+// Run function on page load
+fetchWeather();
+
 
 
 function initRadarMap() {
