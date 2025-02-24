@@ -5,11 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Joseph Pittenger</title>
     <link rel="stylesheet" href="style.css">
+    
+    <!-- Leaflet.js for Radar Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
 </head>
 <body>
     <header>
-        <h1>Joseph Pittenger</h1>
-        <p>FRC Student | Future Meteorologist | Avid Student</p>
+        <h1>Joseph Pittenger - Welcome to My Personal Website!</h1>
+        <p>Explore my hobbies, current projects, and more about me!</p>
         <nav class="tabs">
             <a href="index.html" class="tab">Home</a>
             <a href="projects.html" class="tab">Projects</a>
@@ -17,6 +21,7 @@
         </nav>
     </header>
 
+    <!-- Bio Section -->
     <section class="bio-container">
         <div class="bio-image">
             <img src="images/slide1.jpg" alt="Joseph Pittenger" width="200">
@@ -26,6 +31,25 @@
             <p>Hey, I’m Joe! Welcome to my website. Firstly, thank you for taking the time to read this, I greatly appreciate it. I am a member of a High School Robotics Team (FRC Team 8767) and I am a future meteorologist. I am currently a junior in high school and I am looking to pursue a degree in meteorology. I have a passion for weather and robotics, and I am always looking for new ways to learn and grow in these fields.</p>
         </div>
     </section>
+
+    <!-- Weather Widget -->
+    <section class="weather-widget">
+        <h2>Current Weather</h2>
+        <p id="weather-location">📍 Loading...</p>
+        <p id="temperature">🌡 Temperature: --°F</p>
+        <p id="description">🌤 Condition: --</p>
+        <p id="forecast">📅 Forecast: --</p>
+        <p id="wind-speed">💨 Wind Speed: --</p>
+    </section>
+
+    <!-- Radar Map -->
+    <section class="radar-section">
+        <h2>Live Weather Radar</h2>
+        <div id="radar-map" style="width: 100%; height: 400px;"></div>
+    </section>
+
+    <!-- JavaScript Files -->
+    <script src="weather.js"></script>
 
     <footer>
         <p>© 2025 Joseph Pittenger</p>
