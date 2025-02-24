@@ -116,19 +116,28 @@ h2 {
 
 .read-more {
     display: inline-block;
+    margin-top: 10px;
     padding: 8px 12px;
     background-color: #007bff;
     color: white;
     text-decoration: none;
     border-radius: 5px;
-    margin-left: auto;
 }
 
 .read-more:hover {
     background-color: #0056b3;
 }
 
+.back-link {
+    display: block;
+    margin-top: 20px;
+    color: #ffcc00;
+    text-decoration: none;
+}
 
+.back-link:hover {
+    text-decoration: underline;
+}
 
 /* Mobile Styles */
 @media (max-width: 768px) {
