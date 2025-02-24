@@ -99,28 +99,28 @@ h2 {
 }
 
 .project {
-    border: 1px solid #444;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    background-color: #222;
-    color: white;
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column; /* Stack content vertically */
+    align-items: center; /* Center content */
+    text-align: center;
+    background-color: #2c2b2b;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
 .project img {
-    border-radius: 8px;
+    width: 100px; /* Adjust size as needed */
+    margin: 10px 0; /* Space around the image */
 }
 
 .read-more {
     display: block;
-    width: 100%; /* Full width */
+    width: 90%; /* Almost full width */
     text-align: center;
-    background-color: #007BFF; /* Blue color */
+    background-color: #444; /* Darker background */
     color: white;
-    padding: 10px;
+    padding: 15px;
     margin-top: 10px;
     font-size: 16px;
     text-decoration: none;
@@ -129,7 +129,7 @@ h2 {
 }
 
 .read-more:hover {
-    background-color: #0056b3; /* Darker blue */
+    background-color: #666; /* Slightly lighter on hover */
 }
 
 .back-link {
