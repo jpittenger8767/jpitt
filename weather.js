@@ -45,19 +45,21 @@ async function fetchWeather() {
     }
 }
 
-// Initialize Leaflet map with NWS radar overlay
 function initRadarMap() {
-    const map = L.map('radar-map').setView([lat, lon], 8);
+    const map = L.map('radar-map').setView([lat, lon], 6); // Center on Michigan, allows zooming out
 
     // OpenStreetMap base layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // NWS Radar Overlay
-    L.tileLayer('https://tilecache.rainviewer.com/v2/radar/{z}/{x}/{y}/5/1_0.png', {
-        attribution: '&copy; NWS / RainViewer',
-        opacity: 0.6
+    // NWS Radar Layer (Base Reflectivity)
+    L.tileLayer.wms('https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows?', {
+        layers: 'conus_bref_qcd', // Base Reflectivity Composite
+        format: 'image/png',
+        transparent: true,
+        opacity: 0.7,
+        attribution: "NOAA/NWS"
     }).addTo(map);
 }
 
