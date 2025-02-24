@@ -71,22 +71,6 @@ h2 {
     display: inline-block;
 }
 
-.project {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 15px;
-    margin-bottom: 20px;
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeInUp 1s ease-out forwards;
-}
-
-.project img {
-    border-radius: 10px;
-    margin-right: 15px;
-}
-
 .bio-container {
     display: flex;
     align-items: center;
@@ -113,6 +97,37 @@ h2 {
 .bio-text {
     flex: 1; /* Ensures text takes up remaining space */
 }
+
+.project {
+    border: 1px solid #444;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    background-color: #222;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.project img {
+    border-radius: 8px;
+}
+
+.read-more {
+    display: inline-block;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-left: auto;
+}
+
+.read-more:hover {
+    background-color: #0056b3;
+}
+
 
 
 /* Mobile Styles */
