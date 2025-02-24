@@ -46,18 +46,19 @@ async function fetchWeather() {
 }
 
 function initRadarMap() {
-    const map = L.map('radar-map').setView([lat, lon], 6); // Starts in Michigan, allows zooming out
+    const map = L.map('radar-map').setView([43.3208, -83.3264], 6); // Michigan, but zoomable
 
     // OpenStreetMap base layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // IEM NEXRAD Radar Layer (Live NWS Data)
-    L.tileLayer('https://mesonet.agron.iastate.edu/cache/tile.py/1.0.0/ridge::N0Q/{z}/{x}/{y}.png', {
-        attribution: "NOAA/NWS via Iowa Environmental Mesonet",
+    // NWS Radar WMS Layer (Live Data, Updated Every 5 Mins)
+    L.tileLayer.wms("https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows?", {
+        layers: "conus_bref_qcd",
+        format: "image/png",
         transparent: true,
-        opacity: 0.7
+        opacity: 0.6
     }).addTo(map);
 }
 
