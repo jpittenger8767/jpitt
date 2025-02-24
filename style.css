@@ -146,37 +146,44 @@ h2 {
 .contact-list {
     list-style: none;
     padding: 0;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
 }
 
 .contact-list li {
-    margin: 10px 0;
+    width: 100%;
+    max-width: 400px; /* Adjust max width */
 }
 
 .contact-link {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 250px; /* Adjust width */
-    background-color: #444; /* Darker background */
+    width: 100%;
+    background-color: #222; /* Dark tab color */
     color: white;
     text-decoration: none;
     font-size: 18px;
     font-weight: bold;
-    padding: 12px;
-    border-radius: 8px;
-    transition: background 0.3s ease;
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    border: 2px solid #444; /* Subtle border */
 }
 
 .contact-link img {
-    width: 25px; /* Icon size */
-    margin-right: 10px;
+    width: 30px; /* Icon size */
+    margin-right: 12px;
 }
 
 .contact-link:hover {
-    background-color: #666; /* Lighter hover effect */
+    background-color: #444; /* Slightly lighter */
+    transform: scale(1.05); /* Small pop effect */
 }
+
 
 
 /* Mobile Styles */
