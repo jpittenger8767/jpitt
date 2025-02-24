@@ -143,6 +143,42 @@ h2 {
     text-decoration: underline;
 }
 
+.contact-list {
+    list-style: none;
+    padding: 0;
+    text-align: center;
+}
+
+.contact-list li {
+    margin: 10px 0;
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 250px; /* Adjust width */
+    background-color: #444; /* Darker background */
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 12px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.contact-link img {
+    width: 25px; /* Icon size */
+    margin-right: 10px;
+}
+
+.contact-link:hover {
+    background-color: #666; /* Lighter hover effect */
+}
+
+
 /* Mobile Styles */
 @media (max-width: 768px) {
     .bio-container {
@@ -162,14 +198,6 @@ body {
     color: white;
     text-align: center;
     padding: 20px;
-}
-
-.weather-widget {
-    background: #1e1e1e;
-    padding: 20px;
-    border-radius: 10px;
-    display: inline-block;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 /* Animations */
