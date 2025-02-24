@@ -87,14 +87,6 @@ h2 {
     margin-right: 15px;
 }
 
-.bio-weather-container {
-    display: flex;
-    align-items: center; /* Aligns items vertically */
-    justify-content: flex-start; /* Aligns content to the left */
-    gap: 20px; /* Adds spacing between bio and weather */
-    flex-wrap: wrap; /* Ensures responsiveness on smaller screens */
-}
-
 .bio-container {
     display: flex;
     align-items: center;
@@ -105,15 +97,17 @@ h2 {
     border-radius: 10px; /* Optional: rounded corners */
 }
 
+/* Weather Widget Full Width */
 .weather-widget {
-    background-color: #222; /* Dark theme */
+    background-color: #222;
     color: #fff;
-    padding: 15px;
+    padding: 20px;
     border-radius: 10px;
     text-align: center;
-    min-width: 200px;
-    max-width: 250px;
-    flex-shrink: 0; /* Prevents it from shrinking too much */
+    width: 100%;
+    max-width: none;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+    margin: 20px 0; /* Adds spacing between sections */
 }
 
 .bio-text {

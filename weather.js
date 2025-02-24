@@ -1,75 +1,62 @@
-const API_KEY = "HRZ5a3Q9lUUavq65gfAqmsobzvtXFmLW"; // Replace with your actual API key
 const lat = 43.3370; // Mayville latitude
 const lon = -83.3525; // Mayville longitude
 
 async function fetchWeather() {
-    const url = `https://api.tomorrow.io/v4/weather/realtime?location=${lat},${lon}&apikey=${API_KEY}`;
-
     try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-        const data = await response.json();
-        
-        // Convert temperature to Fahrenheit
-        const tempCelsius = data.data.values.temperature;
-        const tempFahrenheit = (tempCelsius * 9/5) + 32;
-        
-        // Get weather description
-        const weatherCode = data.data.values.weatherCode;
-        const description = getWeatherDescription(weatherCode);
+        // Fetch the grid points for the given lat/lon
+        const gridResponse = await fetch(`https://api.weather.gov/points/${lat},${lon}`);
+        if (!gridResponse.ok) throw new Error(`Grid API error! Status: ${gridResponse.status}`);
+        const gridData = await gridResponse.json();
 
+        const forecastUrl = gridData.properties.forecast;
+        const stationUrl = gridData.properties.observationStations;
+
+        // Fetch weather forecast
+        const forecastResponse = await fetch(forecastUrl);
+        if (!forecastResponse.ok) throw new Error(`Forecast API error! Status: ${forecastResponse.status}`);
+        const forecastData = await forecastResponse.json();
+        
+        const currentForecast = forecastData.properties.periods[0]; // Current period
+
+        // Fetch latest weather observations
+        const stationResponse = await fetch(stationUrl);
+        if (!stationResponse.ok) throw new Error(`Station API error! Status: ${stationResponse.status}`);
+        const stationData = await stationResponse.json();
+
+        const latestStation = stationData.features[0].properties.stationIdentifier;
+        const observationsUrl = `https://api.weather.gov/stations/${latestStation}/observations/latest`;
+
+        const observationsResponse = await fetch(observationsUrl);
+        if (!observationsResponse.ok) throw new Error(`Observations API error! Status: ${observationsResponse.status}`);
+        const observationsData = await observationsResponse.json();
+        
+        const tempFahrenheit = observationsData.properties.temperature.value * 9/5 + 32;
+        const windSpeed = observationsData.properties.windSpeed.value;
+
+        // Update weather widget
         document.getElementById("weather-location").textContent = `📍 Mayville, MI`;
         document.getElementById("temperature").textContent = `🌡 Temperature: ${tempFahrenheit.toFixed(1)}°F`;
-        document.getElementById("description").textContent = `🌤 Condition: ${description}`;
+        document.getElementById("description").textContent = `🌤 Condition: ${currentForecast.shortForecast}`;
+        document.getElementById("forecast").textContent = `📅 Forecast: ${currentForecast.detailedForecast}`;
+        document.getElementById("wind-speed").textContent = `💨 Wind Speed: ${windSpeed ? windSpeed + " mph" : "N/A"}`;
     } catch (error) {
         console.error("Error fetching weather:", error);
         document.getElementById("weather-location").textContent = "⚠️ Error loading weather!";
     }
 }
 
-// Map weather codes to descriptions
-function getWeatherDescription(code) {
-    const weatherDescriptions = {
-        1000: "Clear Sky",
-        1100: "Partly Cloudy",
-        1101: "Mostly Clear",
-        1102: "Mostly Cloudy",
-        2000: "Foggy",
-        2100: "Light Fog",
-        4000: "Drizzle",
-        4001: "Rain",
-        4200: "Light Rain",
-        4201: "Heavy Rain",
-        5000: "Snow",
-        5001: "Flurries",
-        5100: "Light Snow",
-        5101: "Heavy Snow",
-        6000: "Freezing Drizzle",
-        6001: "Freezing Rain",
-        6200: "Light Freezing Rain",
-        6201: "Heavy Freezing Rain",
-        7000: "Ice Pellets",
-        7101: "Heavy Ice Pellets",
-        7102: "Light Ice Pellets",
-        8000: "Thunderstorm"
-    };
-    return weatherDescriptions[code] || "Unknown Weather";
-}
-
-
+// Initialize Leaflet map with NWS radar overlay
 function initRadarMap() {
-    const map = L.map('radar-map').setView([43.3208, -83.3264], 8); // Mayville, 
+    const map = L.map('radar-map').setView([lat, lon], 8);
 
     // OpenStreetMap base layer
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    // Tomorrow.io Precipitation Radar Layer (Fix: Added proper API key syntax & correct layer)
-    L.tileLayer(`https://api.tomorrow.io/v4/map/tile/{z}/{x}/{y}/precipitationIntensity?apikey=${API_KEY}`, {
-        attribution: '&copy; Tomorrow.io',
+    // NWS Radar Overlay
+    L.tileLayer('https://tilecache.rainviewer.com/v2/radar/{z}/{x}/{y}/5/1_0.png', {
+        attribution: '&copy; NWS / RainViewer',
         opacity: 0.6
     }).addTo(map);
 }

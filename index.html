@@ -12,7 +12,7 @@
 </head>
 <body>
     <header>
-        <h1>Welcome to My Personal Website!</h1>
+        <h1>Joseph Pittenger - Welcome to My Personal Website!</h1>
         <p>Explore my hobbies, current projects, and more about me!</p>
         <nav class="tabs">
             <a href="index.html" class="tab">Home</a>
@@ -21,26 +21,26 @@
         </nav>
     </header>
 
-    <section class="bio-weather-container">
-        <!-- Bio Section -->
-        <div class="bio-container">
-            <div class="bio-image">
-                <img src="images/slide1.jpg" alt="Joseph Pittenger" width="200">
-            </div>
-            <div class="bio-text">
-                <h2>About Me</h2>
-                <p>Hey, I’m Joe! Welcome to my website. Firstly, thank you for taking the time to read this, I greatly appreciate it. I am a member of a High School Robotics Team (FRC Team 8767) and I am a future meteorologist. I am currently a junior in high school and I am looking to pursue a degree in meteorology. I have a passion for weather and robotics, and I am always looking for new ways to learn and grow in these fields.</p>
-            </div>
+    <!-- Bio Section -->
+    <section class="bio-container">
+        <div class="bio-image">
+            <img src="images/slide1.jpg" alt="Joseph Pittenger" width="200">
         </div>
-    
-        <!-- Weather Widget (Now Side by Side with Bio) -->
-        <div class="weather-widget">
-            <h2>Current Weather</h2>
-            <p id="weather-location">Loading...</p>
-            <p id="temperature"></p>
-            <p id="description"></p>
+        <div class="bio-text">
+            <h2>About Me</h2>
+            <p>Hey, I’m Joe! Welcome to my website. Firstly, thank you for taking the time to read this, I greatly appreciate it. I am a member of a High School Robotics Team (FRC Team 8767) and I am a future meteorologist. I am currently a junior in high school and I am looking to pursue a degree in meteorology. I have a passion for weather and robotics, and I am always looking for new ways to learn and grow in these fields.</p>
         </div>
-    </section>    
+    </section>
+
+    <!-- Weather Widget -->
+    <section class="weather-widget">
+        <h2>Current Weather</h2>
+        <p id="weather-location">📍 Loading...</p>
+        <p id="temperature">🌡 Temperature: --°F</p>
+        <p id="description">🌤 Condition: --</p>
+        <p id="forecast">📅 Forecast: --</p>
+        <p id="wind-speed">💨 Wind Speed: --</p>
+    </section>
 
     <!-- Radar Map -->
     <section class="radar-section">
