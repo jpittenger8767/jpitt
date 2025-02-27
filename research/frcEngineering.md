@@ -1,7 +1,9 @@
 ---
 layout: default
-title: Elevator Design
-description: Exploring the mechanics, motion profiling, and control systems behind single-stage elevators.
+title: FRC Engineering Concepts
+has_toc: true
+nav_order: 1
+description: Exploring the fundamental engineering principles used in my time in FRC Robotics
 ---
 
 # FRC Engineering Concepts
@@ -30,13 +32,13 @@ To address these issues, our design incorporated the following:
 
 This paper discusses the **design trade-offs, control methods, and performance analysis**.
 
-## Methods
+### Methods
 *(To be completed with details on the implementation and testing process.)*
 
-## Results and Discussion
+### Results and Discussion
 *(To be completed with analysis of system performance and findings.)*
 
-## Conclusion
+### Conclusion
 *(To be completed with a summary of findings and potential improvements.)*
 
 ---

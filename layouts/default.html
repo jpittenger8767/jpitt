@@ -10,14 +10,16 @@
     <header>
         <h1>FRC Engineering</h1>
         <nav class="tabs">
-            <a href="{{ '/' | relative_url }}" class="tab">Home</a>
+            <a href="{{ '/index.html' | relative_url }}" class="tab">Home</a>
             <a href="{{ '/projects.html' | relative_url }}" class="tab">Projects</a>
         </nav>
     </header>
 
-    <div class="container">
-        {{ content }}
-    </div>
+    <main class="page-content" aria-label="Content">
+        <div class="content">
+            {{ content }}
+        </div>
+    </main>
 
     <footer>
         <p>© 2025 Joseph Pittenger</p>
