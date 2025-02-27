@@ -1,4 +1,6 @@
 theme: minima
+minima:
+  skin: dark
 markdown: kramdown
 plugins:
   - jekyll-feed
