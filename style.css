@@ -8,6 +8,26 @@ body {
     scroll-behavior: smooth;
 }
 
+/* Navbar and other elements */
+nav.tabs {
+    background-color: #333;
+    padding: 10px;
+}
+
+/* Links */
+a {
+    color: #bb86fc;
+}
+
+a:hover {
+    color: #ffffff;
+}
+
+/* Headers */
+h1, h2, h3 {
+    color: #ffffff;
+}
+
 header {
     margin-bottom: 20px;
 }
