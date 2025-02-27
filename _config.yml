@@ -3,15 +3,6 @@ minima:
   skin: dark
 
 remote_theme: pmarsceill/just-the-docs
-
-just_the_docs:
-  color_scheme: dark
-
-collections:
-  research:
-    output: true
-    permalink: /research/:path/
-
 markdown: kramdown
 plugins:
   - jekyll-feed
