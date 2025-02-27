@@ -4,13 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page.title }}</title>
-    <link rel="stylesheet" href="{{ site.baseurl }}/assets/css/style.css">
+
+    <!-- Just the Docs Styles -->
+    <link rel="stylesheet" href="{{ '/assets/css/style.css' | relative_url }}">
+    <link rel="stylesheet" href="{{ '/assets/css/just-the-docs.css' | relative_url }}">
+
+    <!-- Ensure Just the Docs applies its theme -->
+    {% if site.just_the_docs.color_scheme == "dark" %}
+    <meta name="color-scheme" content="dark">
+    {% endif %}
 </head>
 <body>
     <header>
-        <h1>FRC Engineering</h1>
+        <h1>Research</h1>
         <nav class="tabs">
-            <a href="{{ '/index.html' | relative_url }}" class="tab">Home</a>
+            <a href="{{ '/' | relative_url }}" class="tab">Home</a>
             <a href="{{ '/projects.html' | relative_url }}" class="tab">Projects</a>
         </nav>
     </header>
