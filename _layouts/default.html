@@ -1,26 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ page.title }}</title>
-    <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
-</head>
-<body>
-    <header>
-        <h1>Research</h1>
-        <nav class="tabs">
-            <a href="{{ '/' | relative_url }}" class="tab">Home</a>
-            <a href="{{ '/projects.html' | relative_url }}" class="tab">Projects</a>
-        </nav>
-    </header>
+---
+layout: default
+---
 
-    <div class="container">
-        {{ content }}
-    </div>
+<header>
+    <h1>Research</h1>
+    <nav class="tabs">
+        <a href="{{ '/' | relative_url }}" class="tab">Home</a>
+        <a href="{{ '/projects.html' | relative_url }}" class="tab">Projects</a>
+    </nav>
+</header>
 
-    <footer>
-        <p>© 2025 Joseph Pittenger</p>
-    </footer>
-</body>
-</html>
+<div class="container">
+    {{ content }}
+</div>
+
+<footer>
+    <p>© 2025 Joseph Pittenger</p>
+</footer>
