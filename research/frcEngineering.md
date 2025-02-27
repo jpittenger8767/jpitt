@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: just-the-docs
 title: FRC Engineering Concepts
 has_toc: true
 nav_order: 1
@@ -42,4 +42,4 @@ This paper discusses the **design trade-offs, control methods, and performance a
 *(To be completed with a summary of findings and potential improvements. Much Later - JP)*
 
 ---
-© 2025 Joseph Pittenger
+
