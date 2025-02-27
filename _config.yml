@@ -3,6 +3,8 @@ minima:
   skin: dark
 
 remote_theme: pmarsceill/just-the-docs
+just_the_docs:
+  color_scheme: dark
 markdown: kramdown
 plugins:
   - jekyll-feed
