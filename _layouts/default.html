@@ -4,15 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ page.title }}</title>
-
-    <!-- Just the Docs Styles -->
-    <link rel="stylesheet" href="{{ '/just-the-docs.css' | relative_url }}">
-
-
-    <!-- Ensure Just the Docs applies its theme -->
-    {% if site.just_the_docs.color_scheme == "dark" %}
-    <meta name="color-scheme" content="dark">
-    {% endif %}
+    <link rel="stylesheet" href="{{ '/style.css' | relative_url }}">
 </head>
 <body>
     <header>
@@ -23,11 +15,9 @@
         </nav>
     </header>
 
-    <main class="page-content" aria-label="Content">
-        <div class="content">
-            {{ content }}
-        </div>
-    </main>
+    <div class="container">
+        {{ content }}
+    </div>
 
     <footer>
         <p>© 2025 Joseph Pittenger</p>
