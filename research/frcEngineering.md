@@ -1,5 +1,4 @@
 ---
-layout: just-the-docs
 title: FRC Engineering Concepts
 has_toc: true
 nav_order: 1

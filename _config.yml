@@ -2,7 +2,7 @@ theme: minima
 minima:
   skin: dark
 
-remote_theme: pmarsceill/just-the-docs
+theme: just-the-docs
 markdown: kramdown
 plugins:
   - jekyll-feed
