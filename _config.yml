@@ -1,0 +1,9 @@
+theme: minima
+minima:
+  skin: dark
+
+plugins:
+  - jekyll-remote-theme
+
+remote_theme: just-the-docs/just-the-docs
+markdown: kramdown

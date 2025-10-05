@@ -8,6 +8,26 @@ body {
     scroll-behavior: smooth;
 }
 
+/* Navbar and other elements */
+nav.tabs {
+    background-color: #333;
+    padding: 10px;
+}
+
+/* Links */
+a {
+    color: #bb86fc;
+}
+
+a:hover {
+    color: #ffffff;
+}
+
+/* Headers */
+h1, h2, h3 {
+    color: #ffffff;
+}
+
 header {
     margin-bottom: 20px;
 }
@@ -99,38 +119,37 @@ h2 {
 }
 
 .project {
-    border: 1px solid #444;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    background-color: #222;
-    color: white;
     display: flex;
-    align-items: center;
-    gap: 15px;
+    flex-direction: column; /* Stack content vertically */
+    align-items: center; /* Center content */
+    text-align: center;
+    background-color: #2c2b2b;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
 .project img {
-    border-radius: 8px;
+    width: 100px; /* Adjust size as needed */
+    margin: 10px 0; /* Space around the image */
 }
 
 .read-more {
     display: block;
-    width: 100%;
+    width: 90%; /* Almost full width */
     text-align: center;
-    background-color: #333; /* Dark mode color */
+    background-color: #444; /* Darker background */
     color: white;
-    padding: 12px 0;
-    font-size: 18px;
-    font-weight: bold;
-    text-decoration: none;
+    padding: 15px;
     margin-top: 10px;
+    font-size: 16px;
+    text-decoration: none;
+    font-weight: bold;
     border-radius: 5px;
-    transition: background 0.3s;
 }
 
 .read-more:hover {
-    background-color: #555; /* Slightly lighter on hover */
+    background-color: #666; /* Slightly lighter on hover */
 }
 
 .back-link {
@@ -143,6 +162,49 @@ h2 {
 .back-link:hover {
     text-decoration: underline;
 }
+
+.contact-list {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+.contact-list li {
+    width: 100%;
+    max-width: 400px; /* Adjust max width */
+}
+
+.contact-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    background-color: #222; /* Dark tab color */
+    color: white;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: bold;
+    padding: 15px;
+    border-radius: 10px;
+    transition: background 0.3s ease, transform 0.2s ease;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.3);
+    border: 2px solid #444; /* Subtle border */
+}
+
+.contact-link img {
+    width: 30px; /* Icon size */
+    margin-right: 12px;
+}
+
+.contact-link:hover {
+    background-color: #444; /* Slightly lighter */
+    transform: scale(1.05); /* Small pop effect */
+}
+
+
 
 /* Mobile Styles */
 @media (max-width: 768px) {
@@ -163,14 +225,6 @@ body {
     color: white;
     text-align: center;
     padding: 20px;
-}
-
-.weather-widget {
-    background: #1e1e1e;
-    padding: 20px;
-    border-radius: 10px;
-    display: inline-block;
-    box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
 }
 
 /* Animations */
