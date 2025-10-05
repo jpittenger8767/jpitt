@@ -28,11 +28,12 @@ To address these issues, our design incorporated the following:
 - An **S-curve motion profile** to ensure smooth acceleration and deceleration, reducing mechanical stress and improving control.  
 - A **state machine-based control system** to manage the elevator's operation, allowing for **precise positioning** and **efficient movement**.  
 - **Integration of sensors** for feedback and error correction, enhancing reliability and performance.  
+- **3D printed components** for accurate and efficient gear splicing.
 
 This paper discusses the **design trade-offs, control methods, and performance analysis**.
 
 ### Methods
-*(To be completed with details on the implementation and testing process.)*
+
 
 ### Results and Discussion
 *(To be completed with analysis of system performance and findings.)*
@@ -40,5 +41,3 @@ This paper discusses the **design trade-offs, control methods, and performance a
 ### Conclusion
 *(To be completed with a summary of findings and potential improvements. Much Later - JP)*
 
----
-© 2025 Joseph Pittenger
