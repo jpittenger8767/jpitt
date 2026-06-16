@@ -1,54 +1,70 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Projects</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Projects — Joe Pittenger</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <h1>My Projects</h1>
-        <nav class="tabs">
-            <a href="index.html" class="tab">Home</a>
-            <a href="projects.html" class="tab active">Projects</a>
-            <a href="contact.html" class="tab">Contact</a>
-        </nav>
-    </header>
 
-    <section class="project-section">
-        <h2>🔧 Robotics Projects</h2>
+  <header class="inner-header">
+    <span class="nav-name">Joe Pittenger</span>
+    <nav class="nav-links">
+      <a href="index.html">Home</a>
+      <a href="projects.html" class="active">Projects</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </header>
 
-        <div class="project">
-            <p><strong>Ongoing FRC Programming:</strong> Created programs for competitive robotics systems in the Java programming language, covering important industrial concepts.</p>
-            <img src="images/wpilibLogo.png" alt="FRC Programming" width="150">
-            <a href="https://github.com/nbrobotics/FRC-2025-Public" class="read-more">Learn More</a>
-        </div>
+  <div class="page">
+    <h2 class="inner-page-title">Projects</h2>
 
-        <div class="project">
-            <p><strong> Ongoing FRC Engineering:</strong> Built various prototypes and final design concepts for our robotics team, and worked on construction with a team</p>
-            <img src="images/robot.png" alt="FRC Robot" width="150">
-            <a href="https://docs.google.com/document/d/1VnRkJ76M3bBH-nbVXmIFL1cPwU66wluOZu0KmF6wDXc/edit?tab=t.0" class="read-more">Learn More</a>
-        </div>
+    <div class="projects-grid">
 
-        <h2>🌩 Meteorology Projects</h2>
+      <p class="project-section-title">Meteorology</p>
 
-        <div class="project">
-            <p><strong>Severe Weather Community Warnings</strong> Built warnings on social media platforms (namely snapchat and instagram) to warn members of my community about incoming severe weather events and warnings based on NWS discretion</p>
-            <img src="images/instaWarning.png" alt="Weather Prediction" width="150">
-            <a href="https://www.instagram.com/joep_wx/" class="read-more">Learn More</a>
-        </div>
+      <div class="project-card">
+        <img class="project-card-img" src="images/radarImage.png" alt="Radar visualization">
+        <h3>PittWeatherRadar</h3>
+        <p>Flask + Leaflet app that fetches real NEXRAD Level 2 radar data from AWS S3 and renders reflectivity and velocity products on an interactive map using arm-pyart.</p>
+        <a href="https://github.com/jpittenger8767" class="card-link" target="_blank" rel="noopener">View on GitHub →</a>
+      </div>
 
-        <div class="project">
-            <p><strong>Live Radar Visualization:</strong> Integrated real-time radar imagery using Leaflet.js and NWS API.</p>
-            <img src="images/radarImage.png" alt="Radar Visualization" width="150">
-            <a href="https://github.com/jpittenger8767/jpitt/blob/main/weather.js" class="read-more">Learn More</a>
-        </div>
+      <div class="project-card">
+        <img class="project-card-img" src="images/instaWarning.png" alt="Weather warning post">
+        <h3>Severe Weather Community Warnings</h3>
+        <p>Built a following on Instagram and Snapchat to distribute NWS-based severe weather alerts to the local community ahead of significant weather events.</p>
+        <a href="https://www.instagram.com/joep_wx/" class="card-link" target="_blank" rel="noopener">@joep_wx on Instagram →</a>
+      </div>
 
-    </section>
+      <p class="project-section-title">Robotics</p>
 
-    <footer>
-        <p>© 2026 Joseph Pittenger</p>
-    </footer>
+      <div class="project-card">
+        <img class="project-card-img" src="images/wpilibLogo.png" alt="WPILib logo">
+        <h3>FRC Robot Programming</h3>
+        <p>Sole programmer for FRC Team 8767 across multiple seasons. 2026 robot features MaxSwerve drive, dual flywheel shooter, slapdown intake, PhotonVision AprilTag alignment, and a full LED subsystem. Team made playoffs for the first time in 2026.</p>
+        <a href="https://github.com/nbrobotics/FRC-2026-Public" class="card-link" target="_blank" rel="noopener">View 2026 codebase →</a>
+      </div>
+
+      <div class="project-card">
+        <img class="project-card-img" src="images/robot.png" alt="FRC Robot">
+        <h3>FRC Robot Engineering</h3>
+        <p>Worked alongside the team on mechanical prototypes and final robot construction across multiple seasons, from intake concepts to drivetrain assembly.</p>
+        <a href="https://docs.google.com/document/d/1VnRkJ76M3bBH-nbVXmIFL1cPwU66wluOZu0KmF6wDXc/edit" class="card-link" target="_blank" rel="noopener">Engineering doc →</a>
+      </div>
+
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <span>© 2026 Joseph Pittenger</span>
+    <div class="footer-links">
+      <a href="https://github.com/jpittenger8767" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.instagram.com/joep_wx/" target="_blank" rel="noopener">Instagram</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </footer>
+
 </body>
 </html>

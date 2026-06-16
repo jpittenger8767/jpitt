@@ -1,58 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joseph Pittenger</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Leaflet.js for Radar Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joe Pittenger</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="weather.js" defer></script>
 </head>
 <body>
-    <header>
-        <h1>Joseph Pittenger</h1>
-        <p>Explore my hobbies, current projects, and more about me!</p>
-        <nav class="tabs">
-            <a href="index.html" class="tab">Home</a>
-            <a href="projects.html" class="tab">Projects</a>
-            <a href="contact.html" class="tab">Contact</a>
-        </nav>
-    </header>
 
-    <!-- Bio Section -->
-    <section class="bio-container">
-        <div class="bio-image">
-            <img src="images/slide1.jpg" alt="Joseph Pittenger" width="200">
+  <!-- Nav overlays the hero banner -->
+  <nav class="site-nav">
+    <span class="nav-name">Joe Pittenger</span>
+    <div class="nav-links">
+      <a href="index.html" class="active">Home</a>
+      <a href="projects.html">Projects</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Hero banner -->
+  <div class="hero-banner">
+    <img src="images/aurora-banner.png" alt="Aurora borealis over Michigan">
+    <div class="hero-overlay"></div>
+    <div class="hero-text">
+      <h1>Hey, I'm Joe.</h1>
+      <p>Meteorology · Robotics · Michigan</p>
+    </div>
+  </div>
+
+  <!-- Bio row -->
+  <div class="bio-row">
+    <div class="bio-photo">
+      <img src="images/slide1.jpg" alt="Joe Pittenger">
+    </div>
+    <div class="bio-text">
+      <p>I'm a robotics programmer for FRC Team 8767 and a future meteorologist. I'm passionate about weather, engineering, and writing — currently building radar tools and planning to study atmospheric science in college.</p>
+      <div class="tags">
+        <span class="tag green">Meteorology</span>
+        <span class="tag green">FRC Robotics</span>
+        <span class="tag">Creative Writing</span>
+        <span class="tag">Python</span>
+        <span class="tag">Java</span>
+        <span class="tag magenta">Aurora chaser</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Home content grid -->
+  <div class="home-content">
+
+    <!-- Weather widget (spans both columns) -->
+    <div class="weather-card">
+      <p class="section-label">Current conditions — Mayville, MI</p>
+      <div class="weather-row">
+        <div class="weather-stat">
+          <div class="weather-stat-val" id="temperature">--°F</div>
+          <div class="weather-stat-lbl">Temperature</div>
         </div>
-        <div class="bio-text">
-            <h2>About Me</h2>
-            <p>Hey, I’m Joe! Welcome to my website. Firstly, thank you for taking the time to read this, I greatly appreciate it. I am a member of a High School Robotics Team (FRC Team 8767) and I am a future meteorologist. I am currently a senior in high school and I am looking to pursue a degree in meteorology. I have a passion for weather, engineering, and programming. I am always looking for new ways to learn and grow in these fields.</p>
+        <div class="weather-stat">
+          <div class="weather-stat-val" id="description">--</div>
+          <div class="weather-stat-lbl">Condition</div>
         </div>
-    </section>
+        <div class="weather-stat">
+          <div class="weather-stat-val" id="wind-speed">--</div>
+          <div class="weather-stat-lbl">Wind</div>
+        </div>
+        <div class="radar-container">
+          <div id="radar-map"></div>
+        </div>
+      </div>
+    </div>
 
-    <!-- Weather Widget -->
-    <section class="weather-widget">
-        <h2>Current Weather</h2>
-        <p id="weather-location">📍 Loading...</p>
-        <p id="temperature">🌡 Temperature: --°F</p>
-        <p id="description">🌤 Condition: --</p>
-        <p id="forecast">📅 Forecast: --</p>
-        <p id="wind-speed">💨 Wind Speed: --</p>
-    </section>
+    <!-- Project card -->
+    <div class="card">
+      <p class="section-label">Latest project</p>
+      <p class="card-title">PittWeatherRadar</p>
+      <p class="card-body">Flask + Leaflet app rendering real NEXRAD Level 2 radar data from AWS S3 using arm-pyart. Displays reflectivity and velocity products on an interactive map.</p>
+      <a href="https://github.com/jpittenger8767" class="card-link" target="_blank" rel="noopener">View on GitHub →</a>
+    </div>
 
-    <!-- Radar Map -->
-    <section class="radar-section">
-        <h2>Live Weather Radar</h2>
-        <div id="radar-map" style="width: 100%; height: 400px;"></div>
-    </section>
+    <!-- Robotics card -->
+    <div class="card">
+      <p class="section-label">Robotics</p>
+      <p class="card-title">FRC Team 8767</p>
+      <p class="card-body">Sole programmer for NB Robotics. 2026 season: MaxSwerve drive, dual flywheel shooter, slapdown intake, and PhotonVision AprilTag alignment via PathPlanner.</p>
+      <a href="https://github.com/nbrobotics/FRC-2026-Public" class="card-link" target="_blank" rel="noopener">View codebase →</a>
+    </div>
 
-    <!-- JavaScript Files -->
-    <script src="weather.js"></script>
+  </div>
 
-    <footer>
-        <p>© 2026 Joseph Pittenger</p>
-    </footer>
+  <footer class="site-footer">
+    <span>© 2026 Joseph Pittenger</span>
+    <div class="footer-links">
+      <a href="https://github.com/jpittenger8767" target="_blank" rel="noopener">GitHub</a>
+      <a href="https://www.instagram.com/joep_wx/" target="_blank" rel="noopener">Instagram</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </footer>
+
 </body>
 </html>
