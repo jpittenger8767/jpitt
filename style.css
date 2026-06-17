@@ -1,9 +1,3 @@
-/* =============================================
-   Joe Pittenger — Personal Site
-   Aurora palette: deep black-greens, electric
-   lime, dusty magenta, warm charcoal
-   ============================================= */
-
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -338,6 +332,7 @@ img { display: block; max-width: 100%; }
 }
 
 /* ---- Projects page ---- */
+/* ---- Projects page ---- */
 .projects-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -360,19 +355,25 @@ img { display: block; max-width: 100%; }
   background: var(--bg-card);
   border: 0.5px solid var(--border);
   border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* Clips image top corners to match the card radius */
+}
+
+.project-card-img {
+  width: 100%;
+  height: 160px; /* Adjust height as needed to show off your UI/Photos */
+  object-fit: cover;
+  object-position: center;
+  border-bottom: 0.5px solid var(--border);
+}
+
+.card-text-content {
   padding: 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 10px;
-}
-
-.project-card-img {
-  width: 48px;
-  height: 48px;
-  object-fit: contain;
-  border-radius: 8px;
-  background: #0e1412;
-  padding: 6px;
+  flex: 1;
 }
 
 .project-card h3 {
