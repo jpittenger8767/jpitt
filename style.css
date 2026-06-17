@@ -658,3 +658,134 @@ img { display: block; max-width: 100%; }
     transition: none !important;
   }
 }
+
+/* =============================================
+   NOTES FEED STYLING
+   ============================================= */
+
+/* Page Header Adjustments */
+.notes-title-container {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+}
+
+.notes-title-container h1 {
+    font-size: 24px;
+    font-weight: 500;
+    margin: 0;
+}
+
+.title-tagline {
+    font-size: 13.5px;
+    color: var(--text-muted);
+}
+
+/* Feed Wrapper */
+.notes-feed {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 0.5rem;
+}
+
+/* Entire card is an anchor link wrapper */
+.note-row-card {
+    background: var(--bg-card);
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    text-decoration: none;
+    transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+    animation: fadeInUp 0.6s ease both;
+}
+
+/* Stagger items entry gracefully using your existing keyframes */
+.notes-feed .note-row-card:nth-child(1) { animation-delay: 0.15s; }
+.notes-feed .note-row-card:nth-child(2) { animation-delay: 0.25s; }
+.notes-feed .note-row-card:nth-child(3) { animation-delay: 0.35s; }
+
+.note-row-card:hover {
+    transform: translateY(-2px);
+    border-color: var(--green-dim);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
+    text-decoration: none; /* Prevents text underlining on card hover */
+}
+
+/* Inside Content */
+.note-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0; /* Prevents text overflow blowouts */
+}
+
+.note-card-title {
+    font-size: 15.5px;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+.note-card-excerpt {
+    font-size: 13.5px;
+    color: var(--text-body);
+    line-height: 1.6;
+    /* Soft clamping if text runs long */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Meta Area (Date + Tags Inline) */
+.note-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 4px;
+}
+
+.note-date {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.note-tags {
+    display: flex;
+    gap: 6px;
+}
+
+/* Decorative Arrow Elements */
+.note-arrow {
+    font-size: 16px;
+    color: var(--text-dim);
+    transition: color 0.2s ease, transform 0.2s ease;
+    flex-shrink: 0;
+}
+
+.note-row-card:hover .note-arrow {
+    color: var(--green);
+    transform: translateX(2px);
+}
+
+/* Responsive adjustments matching your media query breakpoint */
+@media (max-width: 640px) {
+    .note-row-card {
+        padding: 1.25rem;
+    }
+    .note-arrow {
+        display: none; /* Hide arrow layout on narrow viewports */
+    }
+    .note-card-title {
+        font-size: 14.5px;
+    }
+    .note-card-excerpt {
+        font-size: 12.5px;
+    }
+}
