@@ -4,45 +4,80 @@ const LOCATION_NAME = "Mayville, MI";
 let radarMapInstance = null;
 
 async function fetchWeather() {
+  const tempEl = document.getElementById("temperature");
+  const descEl = document.getElementById("description");
+  const windEl = document.getElementById("wind-speed");
+
+  // NWS API Best Practice: Always supply an identifying User-Agent header
+  const fetchOptions = {
+    headers: {
+      'User-Agent': '(pittweather-dashboard-project, contact: jpittenger8767)'
+    }
+  };
+
   try {
-    const gridRes = await fetch(`https://api.weather.gov/points/${LAT},${LON}`);
+    const gridRes = await fetch(`https://api.weather.gov/points/${LAT},${LON}`, fetchOptions);
     if (!gridRes.ok) throw new Error("Grid lookup failed");
     const gridData = await gridRes.json();
 
     const [forecastRes, stationRes] = await Promise.all([
-      fetch(gridData.properties.forecast),
-      fetch(gridData.properties.observationStations)
+      fetch(gridData.properties.forecast, fetchOptions),
+      fetch(gridData.properties.observationStations, fetchOptions)
     ]);
 
     const forecastData = await forecastRes.json();
     const stationData = await stationRes.json();
-    const current = forecastData.properties.periods[0];
+    const currentForecast = forecastData.properties.periods ? forecastData.properties.periods[0] : null;
+
+    // Safety check: Ensure the NWS actually returned a valid station list array
+    if (!stationData.features || stationData.features.length === 0) {
+      throw new Error("No observation stations returned for this coordinate location");
+    }
 
     const stationId = stationData.features[0].properties.stationIdentifier;
-    const obsRes = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`);
-    const obsData = await obsRes.json();
+    const obsRes = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`, fetchOptions);
+    
+    let tempF = "--";
+    let shortForecast = currentForecast ? currentForecast.shortForecast : "--";
+    let windString = "N/A";
 
-    const tempC = obsData.properties.temperature.value;
-    const tempF = tempC !== null ? (tempC * 9/5 + 32).toFixed(1) : "--";
-    const windMps = obsData.properties.windSpeed.value;
-    const windMph = windMps !== null ? (windMps * 2.237).toFixed(0) : null;
-    const windDir = obsData.properties.windDirection.value;
+    if (obsRes.ok) {
+      const obsData = await obsRes.json();
+      const props = obsData.properties;
 
-    const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-    const dirLabel = windDir !== null ? dirs[Math.round(windDir / 22.5) % 16] : "";
+      // 1. Temperature Calculation with Forecast Fallback
+      if (props && props.temperature && props.temperature.value !== null) {
+        tempF = (props.temperature.value * 9/5 + 32).toFixed(1) + "°F";
+      } else if (currentForecast && currentForecast.temperature !== null) {
+        tempF = `${currentForecast.temperature}°F`;
+      }
 
-    const tempEl = document.getElementById("temperature");
-    const descEl = document.getElementById("description");
-    const windEl = document.getElementById("wind-speed");
+      // 2. Wind Calculation with Forecast Fallback
+      if (props && props.windSpeed && props.windSpeed.value !== null) {
+        const windMph = (props.windSpeed.value * 2.237).toFixed(0);
+        const windDir = props.windDirection ? props.windDirection.value : null;
+        const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+        const dirLabel = windDir !== null ? dirs[Math.round(windDir / 22.5) % 16] : "";
+        windString = `${windMph} mph ${dirLabel}`.trim();
+      } else if (currentForecast && currentForecast.windSpeed) {
+        windString = `${currentForecast.windSpeed} ${currentForecast.windDirection || ""}`.trim();
+      }
+    } else if (currentForecast) {
+      // Complete Local Station Outage Fallback
+      tempF = `${currentForecast.temperature}°F`;
+      windString = `${currentForecast.windSpeed} ${currentForecast.windDirection || ""}`.trim();
+    }
 
-    if (tempEl) tempEl.textContent = tempF !== "--" ? `${tempF}°F` : "--";
-    if (descEl) descEl.textContent = current.shortForecast || "--";
-    if (windEl) windEl.textContent = windMph ? `${windMph} mph ${dirLabel}`.trim() : "N/A";
+    // Safely write out values directly to your layout containers
+    if (tempEl) tempEl.textContent = tempF;
+    if (descEl) descEl.textContent = shortForecast || "--";
+    if (windEl) windEl.textContent = windString;
 
   } catch (err) {
     console.error("Weather fetch error:", err);
-    const tempEl = document.getElementById("temperature");
     if (tempEl) tempEl.textContent = "Unavailable";
+    if (descEl) descEl.textContent = "Error loading";
+    if (windEl) windEl.textContent = "N/A";
   }
 }
 
