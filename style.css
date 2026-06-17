@@ -31,6 +31,8 @@ body {
   background: var(--bg);
   color: var(--text-primary);
   min-height: 100vh;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 a { color: var(--green); text-decoration: none; }
@@ -225,6 +227,7 @@ img { display: block; max-width: 100%; }
   padding: 1.75rem 2rem;
   border-bottom: 0.5px solid var(--border-faint);
   animation: fadeInUp 0.6s ease 0.3s both;
+  min-width: 0;
 }
 
 .bio-photo {
@@ -246,6 +249,11 @@ img { display: block; max-width: 100%; }
   height: 100%;
   object-fit: cover;
   object-position: center top;
+}
+
+.bio-text {
+  flex: 1;
+  min-width: 0;
 }
 
 .bio-text p {
@@ -360,6 +368,7 @@ img { display: block; max-width: 100%; }
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0.875rem;
+  min-width: 0;
 }
 
 /* Stagger the two info cards */
@@ -374,6 +383,7 @@ img { display: block; max-width: 100%; }
   border-radius: 10px;
   padding: 1.25rem;
   animation: fadeInUp 0.6s ease 0.3s both;
+  min-width: 0;
 }
 
 .weather-row {
@@ -578,43 +588,68 @@ img { display: block; max-width: 100%; }
 
 /* ---- Responsive ---- */
 @media (max-width: 640px) {
-  .site-nav { padding: 0 1rem; }
-  .hero-text { padding: 0 1rem 1.5rem; }
-  .hero-text h1 { font-size: 24px; }
-  .bio-row { padding: 1.25rem 1rem; flex-direction: column; }
+  /* Prevent any horizontal blowout */
+  html, body { overflow-x: hidden; width: 100%; }
 
+  /* Nav */
+  .site-nav { padding: 0 1rem; }
+  .nav-name { font-size: 14px; }
+  .nav-links a { padding: 5px 10px; font-size: 12px; }
+
+  /* Hero */
+  .hero-banner { height: 56vw; min-height: 200px; max-height: 300px; }
+  .hero-text { padding: 0 1rem 1.25rem; }
+  .hero-text h1 { font-size: 22px; }
+
+  /* Bio */
+  .bio-row {
+    padding: 1.25rem 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .bio-photo { width: 72px; height: 72px; }
+
+  /* Home content — single column, constrained padding */
   .home-content {
     padding: 0.875rem 1rem;
     grid-template-columns: 1fr;
   }
   .weather-card { grid-column: span 1; }
 
-  /* Stack weather stats vertically, make them compact */
+  /* Weather stats — 2-column grid instead of flex row */
   .weather-row {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 0.5rem;
   }
-  .weather-stat {
-    width: 100%;
-    padding: 10px 12px;
-  }
-  .weather-stat-val { font-size: 17px; }
+  .weather-stat { width: 100%; }
+  .weather-stat-val { font-size: 16px; }
 
-  /* Radar map shorter on mobile */
+  /* Radar full width below stats */
   .radar-container {
+    grid-column: span 2;
     flex: unset;
     width: 100%;
     min-height: unset;
   }
-  #radar-map { height: 180px; }
+  #radar-map { height: 160px; }
 
+  /* Projects */
   .projects-grid { grid-template-columns: 1fr; }
   .project-section-title { grid-column: span 1; }
   .project-card-img { height: 140px; }
 
+  /* Inner pages */
   .page { padding: 0 1rem 2rem; }
   .inner-header { padding: 0 1rem; }
-  .site-footer { padding: 1rem; flex-direction: column; gap: 8px; text-align: center; }
+
+  /* Footer */
+  .site-footer {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 8px;
+    text-align: center;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
