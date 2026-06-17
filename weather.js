@@ -1,66 +1,70 @@
-const lat = 43.3370; // Mayville latitude
-const lon = -83.3525; // Mayville longitude
+const LAT = 43.3370;
+const LON = -83.3525;
+const LOCATION_NAME = "Mayville, MI";
 
 async function fetchWeather() {
-    try {
-        // Fetch the grid points for the given lat/lon
-        const gridResponse = await fetch(`https://api.weather.gov/points/${lat},${lon}`);
-        if (!gridResponse.ok) throw new Error(`Grid API error! Status: ${gridResponse.status}`);
-        const gridData = await gridResponse.json();
+  try {
+    const gridRes = await fetch(`https://api.weather.gov/points/${LAT},${LON}`);
+    if (!gridRes.ok) throw new Error("Grid lookup failed");
+    const gridData = await gridRes.json();
 
-        const forecastUrl = gridData.properties.forecast;
-        const stationUrl = gridData.properties.observationStations;
+    const [forecastRes, stationRes] = await Promise.all([
+      fetch(gridData.properties.forecast),
+      fetch(gridData.properties.observationStations)
+    ]);
 
-        // Fetch weather forecast
-        const forecastResponse = await fetch(forecastUrl);
-        if (!forecastResponse.ok) throw new Error(`Forecast API error! Status: ${forecastResponse.status}`);
-        const forecastData = await forecastResponse.json();
-        
-        const currentForecast = forecastData.properties.periods[0]; // Current period
+    const forecastData = await forecastRes.json();
+    const stationData = await stationRes.json();
+    const current = forecastData.properties.periods[0];
 
-        // Fetch latest weather observations
-        const stationResponse = await fetch(stationUrl);
-        if (!stationResponse.ok) throw new Error(`Station API error! Status: ${stationResponse.status}`);
-        const stationData = await stationResponse.json();
+    const stationId = stationData.features[0].properties.stationIdentifier;
+    const obsRes = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`);
+    const obsData = await obsRes.json();
 
-        const latestStation = stationData.features[0].properties.stationIdentifier;
-        const observationsUrl = `https://api.weather.gov/stations/${latestStation}/observations/latest`;
+    const tempC = obsData.properties.temperature.value;
+    const tempF = tempC !== null ? (tempC * 9/5 + 32).toFixed(1) : "--";
+    const windMps = obsData.properties.windSpeed.value;
+    const windMph = windMps !== null ? (windMps * 2.237).toFixed(0) : null;
+    const windDir = obsData.properties.windDirection.value;
 
-        const observationsResponse = await fetch(observationsUrl);
-        if (!observationsResponse.ok) throw new Error(`Observations API error! Status: ${observationsResponse.status}`);
-        const observationsData = await observationsResponse.json();
-        
-        const tempFahrenheit = observationsData.properties.temperature.value * 9/5 + 32;
-        const windSpeed = observationsData.properties.windSpeed.value;
+    const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+    const dirLabel = windDir !== null ? dirs[Math.round(windDir / 22.5) % 16] : "";
 
-        // Update weather widget
-        document.getElementById("weather-location").textContent = `📍 Mayville, MI`;
-        document.getElementById("temperature").textContent = `🌡 Temperature: ${tempFahrenheit.toFixed(1)}°F`;
-        document.getElementById("description").textContent = `🌤 Condition: ${currentForecast.shortForecast}`;
-        document.getElementById("forecast").textContent = `📅 Forecast: ${currentForecast.detailedForecast}`;
-        document.getElementById("wind-speed").textContent = `💨 Wind Speed: ${windSpeed ? windSpeed + " mph" : "N/A"}`;
-    } catch (error) {
-        console.error("Error fetching weather:", error);
-        document.getElementById("weather-location").textContent = "⚠️ Error loading weather!";
-    }
+    const tempEl = document.getElementById("temperature");
+    const descEl = document.getElementById("description");
+    const windEl = document.getElementById("wind-speed");
+
+    if (tempEl) tempEl.textContent = tempF !== "--" ? `${tempF}°F` : "--";
+    if (descEl) descEl.textContent = current.shortForecast || "--";
+    if (windEl) windEl.textContent = windMph ? `${windMph} mph ${dirLabel}`.trim() : "N/A";
+
+  } catch (err) {
+    console.error("Weather fetch error:", err);
+    const tempEl = document.getElementById("temperature");
+    if (tempEl) tempEl.textContent = "Unavailable";
+  }
 }
 
 function initRadarMap() {
-    const map = L.map('radar-map').setView([43.3208, -83.3264], 6); // Michigan, but zoomable
+  const mapEl = document.getElementById("radar-map");
+  if (!mapEl) return;
 
-    // OpenStreetMap base layer
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        attribution: '&copy; OpenStreetMap contributors'
-    }).addTo(map);
+  const map = L.map("radar-map", { zoomControl: false, attributionControl: false })
+    .setView([LAT, LON], 7);
 
-    // NWS Radar WMS Layer (Live Data, Updated Every 5 Mins)
-    L.tileLayer.wms("https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows?", {
-        layers: "conus_bref_qcd",
-        format: "image/png",
-        transparent: true,
-        opacity: 0.6
-    }).addTo(map);
+  L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
+    maxZoom: 10
+  }).addTo(map);
+
+  L.tileLayer.wms("https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows?", {
+    layers: "conus_bref_qcd",
+    format: "image/png",
+    transparent: true,
+    opacity: 0.7
+  }).addTo(map);
 }
 
-fetchWeather();
-initRadarMap();
+document.addEventListener("DOMContentLoaded", () => {
+  fetchWeather();
+  initRadarMap();
+});
