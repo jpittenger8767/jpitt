@@ -792,23 +792,43 @@ img { display: block; max-width: 100%; }
 
 /* --- WEATHER DASHBOARD SLIDESHOW EXTENSIONS --- */
 
+/* --- UPDATED WEATHER DASHBOARD ANIMATED SLIDESHOW --- */
+
 .weather-slideshow-container {
   position: relative;
-  min-height: 250px; /* Assures a stable card height between slides */
-  overflow: hidden;
+  min-height: 270px; 
+  overflow: hidden; /* Keeps the slide slide translation cleanly bound inside the card */
 }
 
-/* Base class for all slides: hidden by default with a quick fade-in transition */
+/* Base class for all slides */
 .weather-slide {
   display: none;
-  opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  width: 100%;
 }
 
-/* Displays the slide when targeted by JS */
+/* This targets the slide being turned ON */
 .weather-slide.active-slide {
   display: block;
-  opacity: 1;
+  animation: slideInLeft 0.5s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+/* Smooth horizontal transition animation */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(30px); /* Slides slightly from the right side */
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Keep map rendering crisp during transitions */
+#radar-map {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.3s ease;
 }
 
 /* SPC Slide Layout adjustments */

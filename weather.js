@@ -164,22 +164,27 @@ function manualSelectSlide(index) {
   startSlideshow();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+// 1. Initial execution to grab the data immediately on load
+fetchWeather();
+fetchActiveAlerts();
+initRadarMap();
+
+// 2. Initialize the first slide view immediately
+showSlide(0);
+
+// 3. Map the manual click event override to each navigation dot
+const dots = document.querySelectorAll(".dot");
+dots.forEach((dot, index) => {
+  dot.addEventListener("click", () => {
+    manualSelectSlide(index);
+  });
+});
+
+// 4. Start the automatic slide rotation engine (every 10 seconds)
+startSlideshow();
+
+// 5. Background Data Polling Loop (Refreshes the raw API data every 5 minutes)
+setInterval(() => {
   fetchWeather();
   fetchActiveAlerts();
-  initRadarMap();
-
-  // Initialize the first slide view
-  showSlide(0);
-
-  // Map the manual click event override to each navigation dot
-  const dots = document.querySelectorAll(".dot");
-  dots.forEach((dot, index) => {
-    dot.addEventListener("click", () => {
-      manualSelectSlide(index);
-    });
-  });
-
-  // Start the automatic rotation engine
-  startSlideshow();
-});
+}, 300000);
