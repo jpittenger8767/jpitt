@@ -1,14 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Joseph Pittenger</title>
-    <link rel="stylesheet" href="style.css">
-    
-    <!-- Leaflet.js for Radar Map -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Joseph Pittenger</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+  <script src="weather.js" defer></script>
+  <link rel="icon" type="image/png" href="images/favicon.jpg">
 </head>
 <body>
 
@@ -53,45 +53,24 @@
   <div class="home-content">
 
     
-    <div class="weather-card weather-slideshow-container">
-      <p class="section-label" id="slideshow-label">Current conditions — Mayville, MI</p>
-      
-      <div class="weather-slide active-slide" data-label="Current conditions — Mayville, MI">
-        <div class="weather-row">
-          <div class="weather-stat">
-            <div class="weather-stat-val" id="temperature">--°F</div>
-            <div class="weather-stat-lbl">Temperature</div>
-          </div>
-          <div class="weather-stat">
-            <div class="weather-stat-val" id="description">--</div>
-            <div class="weather-stat-lbl">Condition</div>
-          </div>
-          <div class="weather-stat">
-            <div class="weather-stat-val" id="wind-speed">--</div>
-            <div class="weather-stat-lbl">Wind</div>
-          </div>
-          <div class="radar-container">
-            <div id="radar-map"></div>
-          </div>
+    <div class="weather-card">
+      <p class="section-label">Current conditions — Mayville, MI</p>
+      <div class="weather-row">
+        <div class="weather-stat">
+          <div class="weather-stat-val" id="temperature">--°F</div>
+          <div class="weather-stat-lbl">Temperature</div>
         </div>
-      </div>
-
-      <div class="weather-slide" data-label="SPC Convective Outlook — Day 1">
-        <div class="spc-slide-content">
-          <img src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="SPC Day 1 Convective Outlook" class="spc-outlook-img">
+        <div class="weather-stat">
+          <div class="weather-stat-val" id="description">--</div>
+          <div class="weather-stat-lbl">Condition</div>
         </div>
-      </div>
-
-      <div class="weather-slide" data-label="Active Hazards — Michigan">
-        <div id="alerts-container">
-          <p class="loading-alerts">Checking for active hazards...</p>
+        <div class="weather-stat">
+          <div class="weather-stat-val" id="wind-speed">--</div>
+          <div class="weather-stat-lbl">Wind</div>
         </div>
-      </div>
-
-      <div class="slideshow-dots">
-        <span class="dot active-dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
+        <div class="radar-container">
+          <div id="radar-map"></div>
+        </div>
       </div>
     </div>
 

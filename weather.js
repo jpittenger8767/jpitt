@@ -4,11 +4,10 @@ const LOCATION_NAME = "Mayville, MI";
 let radarMapInstance = null;
 
 async function fetchWeather() {
-    try {
-        // Fetch the grid points for the given lat/lon
-        const gridResponse = await fetch(`https://api.weather.gov/points/${lat},${lon}`);
-        if (!gridResponse.ok) throw new Error(`Grid API error! Status: ${gridResponse.status}`);
-        const gridData = await gridResponse.json();
+  try {
+    const gridRes = await fetch(`https://api.weather.gov/points/${LAT},${LON}`);
+    if (!gridRes.ok) throw new Error("Grid lookup failed");
+    const gridData = await gridRes.json();
 
     const [forecastRes, stationRes] = await Promise.all([
       fetch(gridData.properties.forecast),
@@ -87,7 +86,8 @@ async function fetchActiveAlerts() {
 }
 
 function initRadarMap() {
-    const map = L.map('radar-map').setView([43.3208, -83.3264], 6); // Michigan, but zoomable
+  const mapEl = document.getElementById("radar-map");
+  if (!mapEl) return;
 
   // Leaflet doesn't always play well when initialized inside hidden display blocks.
   // We'll reset sizes or re-initialize safely if needed.
