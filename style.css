@@ -38,6 +38,40 @@ a:hover { text-decoration: underline; }
 
 img { display: block; max-width: 100%; }
 
+/* =============================================
+   KEYFRAME DEFINITIONS
+   ============================================= */
+
+/* Page load fade-in + rise */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Hero text slides up from lower */
+@keyframes heroEntrance {
+  from { opacity: 0; transform: translateY(28px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Very slow subtle zoom on hero banner image */
+@keyframes slowZoom {
+  from { transform: scale(1.0); }
+  to   { transform: scale(1.06); }
+}
+
+/* Soft pulse glow on the green accent text */
+@keyframes subtlePulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.65; }
+}
+
+/* Fade in only (for bio row, footer) */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
 /* ---- Layout wrapper ---- */
 .page {
   max-width: 900px;
@@ -55,6 +89,7 @@ img { display: block; max-width: 100%; }
   justify-content: space-between;
   padding: 0 2rem;
   height: 56px;
+  animation: fadeIn 0.8s ease forwards;
 }
 
 .nav-name {
@@ -91,11 +126,22 @@ img { display: block; max-width: 100%; }
   overflow: hidden;
 }
 
+@media (max-width: 640px) {
+  .hero-banner {
+    height: 52vw;
+    min-height: 220px;
+    max-height: 320px;
+  }
+}
+
+/* Slow zoom on the aurora photo */
 .hero-banner img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   object-position: center 25%;
+  animation: slowZoom 14s ease-out forwards;
+  transform-origin: center center;
 }
 
 .hero-overlay {
@@ -114,6 +160,7 @@ img { display: block; max-width: 100%; }
   position: absolute;
   bottom: 0; left: 0; right: 0;
   padding: 0 2rem 2rem;
+  animation: heroEntrance 0.9s ease 0.2s both;
 }
 
 .hero-text h1 {
@@ -124,11 +171,13 @@ img { display: block; max-width: 100%; }
   letter-spacing: -0.01em;
 }
 
+/* Subtle pulse on the tagline */
 .hero-text p {
   font-size: 13px;
   color: var(--green);
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  animation: subtlePulse 4s ease-in-out 1.5s infinite;
 }
 
 /* ---- Inner page header (non-home) ---- */
@@ -140,6 +189,7 @@ img { display: block; max-width: 100%; }
   align-items: center;
   justify-content: space-between;
   height: 56px;
+  animation: fadeIn 0.5s ease forwards;
 }
 
 .inner-header .nav-name {
@@ -164,6 +214,7 @@ img { display: block; max-width: 100%; }
   border-bottom: 0.5px solid var(--border-faint);
   margin-bottom: 1.75rem;
   padding-bottom: 1rem;
+  animation: fadeInUp 0.6s ease 0.1s both;
 }
 
 /* ---- Bio row ---- */
@@ -173,6 +224,7 @@ img { display: block; max-width: 100%; }
   align-items: flex-start;
   padding: 1.75rem 2rem;
   border-bottom: 0.5px solid var(--border-faint);
+  animation: fadeInUp 0.6s ease 0.3s both;
 }
 
 .bio-photo {
@@ -182,6 +234,11 @@ img { display: block; max-width: 100%; }
   flex-shrink: 0;
   overflow: hidden;
   border: 0.5px solid rgba(90, 175, 122, 0.18);
+  transition: border-color 0.3s ease;
+}
+
+.bio-photo:hover {
+  border-color: rgba(90, 175, 122, 0.5);
 }
 
 .bio-photo img {
@@ -212,6 +269,12 @@ img { display: block; max-width: 100%; }
   border: 0.5px solid #1a2620;
   color: #6a8a78;
   background: #0e1410;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.tag:hover {
+  border-color: #2a4a38;
+  color: #8aaa98;
 }
 
 .tag.green {
@@ -220,10 +283,20 @@ img { display: block; max-width: 100%; }
   background: var(--green-tag-bg);
 }
 
+.tag.green:hover {
+  border-color: var(--green-dim);
+  color: #8dd47a;
+}
+
 .tag.magenta {
   border-color: var(--magenta-dim);
   color: var(--magenta);
   background: var(--magenta-bg);
+}
+
+.tag.magenta:hover {
+  border-color: #6a2a5a;
+  color: #d898c8;
 }
 
 /* ---- Section label ---- */
@@ -241,6 +314,14 @@ img { display: block; max-width: 100%; }
   border: 0.5px solid var(--border);
   border-radius: 10px;
   padding: 1.25rem;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  animation: fadeInUp 0.6s ease both;
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  border-color: var(--green-dim);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
 }
 
 .card-title {
@@ -264,11 +345,12 @@ img { display: block; max-width: 100%; }
   border-bottom: 0.5px solid var(--green-dim);
   padding-bottom: 1px;
   text-decoration: none;
-  transition: color 0.2s;
+  transition: color 0.2s, border-color 0.2s;
 }
 
 .card-link:hover {
   color: #8dd47a;
+  border-color: var(--green);
   text-decoration: none;
 }
 
@@ -280,6 +362,10 @@ img { display: block; max-width: 100%; }
   gap: 0.875rem;
 }
 
+/* Stagger the two info cards */
+.home-content .card:nth-child(2) { animation-delay: 0.45s; }
+.home-content .card:nth-child(3) { animation-delay: 0.6s; }
+
 /* ---- Weather card ---- */
 .weather-card {
   grid-column: span 2;
@@ -287,6 +373,7 @@ img { display: block; max-width: 100%; }
   border: 0.5px solid var(--border);
   border-radius: 10px;
   padding: 1.25rem;
+  animation: fadeInUp 0.6s ease 0.3s both;
 }
 
 .weather-row {
@@ -301,6 +388,11 @@ img { display: block; max-width: 100%; }
   border-radius: 8px;
   padding: 12px;
   border: 0.5px solid #182220;
+  transition: border-color 0.2s ease;
+}
+
+.weather-stat:hover {
+  border-color: var(--green-dim);
 }
 
 .weather-stat-val {
@@ -332,7 +424,6 @@ img { display: block; max-width: 100%; }
 }
 
 /* ---- Projects page ---- */
-/* ---- Projects page ---- */
 .projects-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -349,6 +440,7 @@ img { display: block; max-width: 100%; }
   padding-bottom: 8px;
   border-bottom: 0.5px solid var(--border-faint);
   grid-column: span 2;
+  animation: fadeIn 0.5s ease both;
 }
 
 .project-card {
@@ -357,15 +449,35 @@ img { display: block; max-width: 100%; }
   border-radius: 10px;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* Clips image top corners to match the card radius */
+  overflow: hidden;
+  transition: transform 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease;
+  animation: fadeInUp 0.6s ease both;
 }
+
+.project-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--green-dim);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.45);
+}
+
+/* Stagger project cards */
+.projects-grid .project-card:nth-child(2) { animation-delay: 0.15s; }
+.projects-grid .project-card:nth-child(3) { animation-delay: 0.25s; }
+.projects-grid .project-card:nth-child(4) { animation-delay: 0.35s; }
+.projects-grid .project-card:nth-child(5) { animation-delay: 0.45s; }
 
 .project-card-img {
   width: 100%;
-  height: 160px; /* Adjust height as needed to show off your UI/Photos */
+  height: 160px;
   object-fit: cover;
   object-position: center;
   border-bottom: 0.5px solid var(--border);
+  transition: transform 0.4s ease;
+}
+
+/* Image zooms slightly on card hover */
+.project-card:hover .project-card-img {
+  transform: scale(1.04);
 }
 
 .card-text-content {
@@ -407,12 +519,19 @@ img { display: block; max-width: 100%; }
   padding: 14px 18px;
   text-decoration: none;
   color: var(--text-primary);
-  transition: background 0.2s, border-color 0.2s;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  animation: fadeInUp 0.5s ease both;
 }
+
+/* Stagger contact items */
+.contact-list .contact-item:nth-child(1) { animation-delay: 0.15s; }
+.contact-list .contact-item:nth-child(2) { animation-delay: 0.25s; }
+.contact-list .contact-item:nth-child(3) { animation-delay: 0.35s; }
 
 .contact-item:hover {
   background: #111818;
   border-color: var(--green-dim);
+  transform: translateX(4px);
   text-decoration: none;
 }
 
@@ -444,6 +563,7 @@ img { display: block; max-width: 100%; }
   align-items: center;
   font-size: 12px;
   color: var(--text-dim);
+  animation: fadeIn 0.8s ease 0.5s both;
 }
 
 .site-footer a {
@@ -462,17 +582,44 @@ img { display: block; max-width: 100%; }
   .hero-text { padding: 0 1rem 1.5rem; }
   .hero-text h1 { font-size: 24px; }
   .bio-row { padding: 1.25rem 1rem; flex-direction: column; }
-  .home-content { padding: 1rem; grid-template-columns: 1fr; }
+
+  .home-content {
+    padding: 0.875rem 1rem;
+    grid-template-columns: 1fr;
+  }
   .weather-card { grid-column: span 1; }
-  .weather-row { flex-direction: column; }
-  .radar-container { flex: unset; }
+
+  /* Stack weather stats vertically, make them compact */
+  .weather-row {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .weather-stat {
+    width: 100%;
+    padding: 10px 12px;
+  }
+  .weather-stat-val { font-size: 17px; }
+
+  /* Radar map shorter on mobile */
+  .radar-container {
+    flex: unset;
+    width: 100%;
+    min-height: unset;
+  }
+  #radar-map { height: 180px; }
+
   .projects-grid { grid-template-columns: 1fr; }
   .project-section-title { grid-column: span 1; }
+  .project-card-img { height: 140px; }
+
   .page { padding: 0 1rem 2rem; }
   .inner-header { padding: 0 1rem; }
   .site-footer { padding: 1rem; flex-direction: column; gap: 8px; text-align: center; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; }
+  *, *::before, *::after {
+    animation: none !important;
+    transition: none !important;
+  }
 }
