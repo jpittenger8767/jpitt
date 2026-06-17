@@ -108,6 +108,7 @@ function initRadarMap() {
 
 // Slideshow Controller Logic
 // --- Updated Slideshow Controller Logic with Manual Override ---
+// --- Updated Slideshow Controller Logic with Manual Reset ---
 let currentSlideIndex = 0;
 let slideshowTimer = null;
 
@@ -123,21 +124,33 @@ function showSlide(index) {
   else if (index < 0) currentSlideIndex = slides.length - 1;
   else currentSlideIndex = index;
 
-  // Remove active styling classes from everything
-  slides.forEach(slide => slide.classList.remove("active-slide"));
-  dots.forEach(dot => dot.classList.remove("active-dot"));
+  slides.forEach((slide, idx) => {
+    // 1. Completely remove active classes to reset animations completely
+    slide.classList.remove("active-slide");
+    
+    // 2. Clear any inline styles that might interfere
+    slide.style.animation = 'none'; 
+    
+    if (dots[idx]) dots[idx].classList.remove("active-dot");
+  });
 
-  // Reveal the targeted slide and activate its corresponding dot
   const currentSlide = slides[currentSlideIndex];
+
+  // 3. FORCE REFLOW: This tells the browser engine to clear the animation cache
+  void currentSlide.offsetWidth; 
+
+  // 4. Re-apply the active slide layout and trigger the CSS keyframes
   currentSlide.classList.add("active-slide");
+  currentSlide.style.animation = ''; // Restores your CSS slideInLeft rules cleanly
+  
   if (dots[currentSlideIndex]) dots[currentSlideIndex].classList.add("active-dot");
   
-  // Update the card's section header text dynamically
+  // Dynamic header text based on current active view
   if (sectionLabel && currentSlide.dataset.label) {
     sectionLabel.textContent = currentSlide.dataset.label;
   }
 
-  // Leaflet map layout fix for Slide 1
+  // Leaflet map canvas realignment fix
   if (currentSlideIndex === 0 && radarMapInstance) {
     setTimeout(() => {
       radarMapInstance.invalidateSize();
@@ -145,22 +158,22 @@ function showSlide(index) {
   }
 }
 
-// Function to handle automatic rotation
+// Function to handle automatic rotation loop
 function startSlideshow() {
   slideshowTimer = setInterval(() => {
     showSlide(currentSlideIndex + 1);
-  }, 10000); // 10 seconds
+  }, 10000);
 }
 
-// Manual Override Function: triggered when a user clicks a dot
+// Manual Override Function
 function manualSelectSlide(index) {
-  // 1. Stop the automatic timer immediately
+  // Clear the timer right away so it doesn't flip slides prematurely
   clearInterval(slideshowTimer);
 
-  // 2. Jump directly to the selected slide
+  // Jump to slide (which now forces the CSS animation reset)
   showSlide(index);
 
-  // 3. Optional: Restart the auto-rotation loop after 20 seconds of user inactivity
+  // Restart the automatic loop cycle
   startSlideshow();
 }
 
