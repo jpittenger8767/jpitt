@@ -404,6 +404,27 @@ img { display: block; max-width: 100%; }
 }
 .wx-img-link:hover { color: #8dd47a; text-decoration: none; }
 
+/* ---- Skeleton loader ---- */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.wx-skeleton {
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    #0e1412 25%,
+    #182220 50%,
+    #0e1412 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
+  z-index: 1;
+}
+.wx-spc-img { position: relative; z-index: 2; }
+
 /* ---- Projects page ---- */
 .projects-grid {
   display: grid;

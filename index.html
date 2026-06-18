@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Joseph Pittenger</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Preload Leaflet and SPC images so they fetch immediately, not on-demand -->
+  <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" as="script">
+  <link rel="prefetch" href="https://www.spc.noaa.gov/products/outlook/day1otlk_1200.gif" as="image">
+  <link rel="prefetch" href="https://www.spc.noaa.gov/products/watch/validww.png" as="image">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="weather.js" defer></script>
@@ -87,9 +91,11 @@
       <!-- Slide 1: SPC Day 1 outlook -->
       <div class="wx-slide" id="wx-slide-1">
         <div class="wx-img-container">
+          <div class="wx-skeleton" id="spc-skeleton-1"></div>
           <img src="https://www.spc.noaa.gov/products/outlook/day1otlk_1200.gif"
                alt="SPC Day 1 Convective Outlook"
                class="wx-spc-img"
+               onload="this.previousElementSibling.style.display='none'"
                onerror="this.src='https://www.spc.noaa.gov/products/outlook/day1otlk.gif'">
           <a href="https://www.spc.noaa.gov/products/outlook/" target="_blank" rel="noopener" class="wx-img-link">View on SPC →</a>
         </div>
@@ -98,9 +104,11 @@
       <!-- Slide 2: Watches & warnings -->
       <div class="wx-slide" id="wx-slide-2">
         <div class="wx-img-container">
+          <div class="wx-skeleton" id="spc-skeleton-2"></div>
           <img src="https://www.spc.noaa.gov/products/watch/validww.png"
                alt="Current Watches and Warnings"
-               class="wx-spc-img">
+               class="wx-spc-img"
+               onload="this.previousElementSibling.style.display='none'">
           <a href="https://www.spc.noaa.gov/products/watch/" target="_blank" rel="noopener" class="wx-img-link">View on SPC →</a>
         </div>
       </div>
