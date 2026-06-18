@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Joseph Pittenger</title>
   <link rel="stylesheet" href="style.css">
+  <!-- Preload Leaflet and SPC images so they fetch immediately, not on-demand -->
+  <link rel="preload" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" as="script">
+  <link rel="prefetch" href="https://www.spc.noaa.gov/products/outlook/day1otlk_1200.gif" as="image">
+  <link rel="prefetch" href="https://www.spc.noaa.gov/products/watch/validww.png" as="image">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="weather.js" defer></script>
@@ -12,34 +16,32 @@
 </head>
 <body>
 
-
   <nav class="site-nav">
     <span class="nav-name">Joseph Pittenger</span>
     <div class="nav-links">
       <a href="index.html" class="active">Home</a>
+      <a href="about.html">About</a>
       <a href="projects.html">Projects</a>
       <a href="notes.html">Blog</a>
       <a href="contact.html">Contact</a>
     </div>
   </nav>
 
- 
   <div class="hero-banner">
     <img src="images/aurora-banner.jpg" alt="Aurora borealis over Michigan (Photo by Joe Pittenger)">
     <div class="hero-overlay"></div>
     <div class="hero-text">
       <h1>Hey, I'm Joe.</h1>
-      <p>Meteorology · Robotics · Michigan</p>
+      <p>Meteorology · Programming · University of Oklahoma</p>
     </div>
   </div>
 
-
   <div class="bio-row">
     <div class="bio-photo">
-      <img src="images/slide1.jpg" alt="Joe Pittenger (Photo by Joe Pittenger)">
+      <img src="images/slide1.jpg" alt="Joe Pittenger">
     </div>
     <div class="bio-text">
-      <p>I am a upcoming college freshman at the University of Oklahoma and a future meteorologist. I'm passionate about weather, robotics, and programming — currently expanding my skills and planning to study atmospheric science in college.</p>
+      <p>I am an upcoming college freshman at the University of Oklahoma and a future meteorologist. I'm passionate about weather, robotics, and programming — currently expanding my skills and planning to study atmospheric science in college.</p>
       <div class="tags">
         <span class="tag green">Meteorology</span>
         <span class="tag green">FRC Robotics</span>
@@ -49,14 +51,24 @@
     </div>
   </div>
 
- 
   <div class="home-content">
 
-    
-    <div class="weather-card weather-slideshow-container">
-      <p class="section-label" id="slideshow-label">Current conditions — Mayville, MI</p>
-      
-      <div class="weather-slide active-slide" data-label="Current conditions — Mayville, MI">
+    <!-- Weather slideshow card -->
+    <div class="weather-card">
+
+      <!-- Header: label + dots + pause -->
+      <div class="wx-slide-header">
+        <p class="section-label" id="wx-slide-label">Current conditions — Mayville, MI</p>
+        <div class="wx-slide-controls">
+          <button class="wx-dot active" data-slide="0" aria-label="Local weather"></button>
+          <button class="wx-dot" data-slide="1" aria-label="SPC Day 1 outlook"></button>
+          <button class="wx-dot" data-slide="2" aria-label="Watches and warnings"></button>
+          <button class="wx-pause" id="wx-pause" aria-label="Pause slideshow">&#10074;&#10074;</button>
+        </div>
+      </div>
+
+      <!-- Slide 0: local weather + radar -->
+      <div class="wx-slide active" id="wx-slide-0">
         <div class="weather-row">
           <div class="weather-stat">
             <div class="weather-stat-val" id="temperature">--°F</div>
@@ -76,26 +88,25 @@
         </div>
       </div>
 
-      <div class="weather-slide" data-label="SPC Convective Outlook — Day 1">
-        <div class="spc-slide-content">
-          <img src="https://www.spc.noaa.gov/products/outlook/day1otlk.gif" alt="SPC Day 1 Convective Outlook" class="spc-outlook-img">
+      <!-- Slide 1: SPC Day 1 outlook summary -->
+      <div class="wx-slide" id="wx-slide-1">
+        <div class="wx-text-slide" id="spc-outlook-content">
+          <p class="wx-loading">Loading outlook...</p>
         </div>
+        <a href="https://www.spc.noaa.gov/products/outlook/" target="_blank" rel="noopener" class="wx-slide-extlink">View full outlook on SPC →</a>
       </div>
 
-      <div class="weather-slide" data-label="Active Hazards — Michigan">
-        <div id="alerts-container">
-          <p class="loading-alerts">Checking for active hazards...</p>
+      <!-- Slide 2: Active alerts -->
+      <div class="wx-slide" id="wx-slide-2">
+        <div class="wx-text-slide" id="alerts-content">
+          <p class="wx-loading">Checking for active alerts...</p>
         </div>
+        <a href="https://www.weather.gov/dtx/" target="_blank" rel="noopener" class="wx-slide-extlink">View NWS Detroit/Pontiac →</a>
       </div>
 
-      <div class="slideshow-dots">
-        <span class="dot active-dot"></span>
-        <span class="dot"></span>
-        <span class="dot"></span>
-      </div>
     </div>
 
-   
+    <!-- Project card -->
     <div class="card">
       <p class="section-label">Latest project</p>
       <p class="card-title">PittWeatherRadar</p>
@@ -103,11 +114,11 @@
       <a href="https://github.com/jpittenger8767" class="card-link" target="_blank" rel="noopener">View on GitHub →</a>
     </div>
 
-    
+    <!-- Robotics card -->
     <div class="card">
       <p class="section-label">Robotics</p>
       <p class="card-title">FRC Team 8767</p>
-      <p class="card-body">Sole programmer for FRC 8767 2022-2026 season: MaxSwerve drive, dual flywheel shooter, slapdown intake, and PhotonVision AprilTag alignment via PathPlanner.</p>
+      <p class="card-body">Sole programmer for FRC 8767 2022–2026 seasons: MaxSwerve drive, dual flywheel shooter, slapdown intake, and PhotonVision AprilTag alignment via PathPlanner.</p>
       <a href="https://github.com/nbrobotics/FRC-2026-Public" class="card-link" target="_blank" rel="noopener">View codebase →</a>
     </div>
 

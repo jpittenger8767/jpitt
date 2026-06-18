@@ -1,9 +1,23 @@
 const LAT = 43.3370;
 const LON = -83.3525;
-const LOCATION_NAME = "Mayville, MI";
 let radarMapInstance = null;
 
+const SLIDE_LABELS = [
+  "Current conditions — Mayville, MI",
+  "SPC Day 1 Convective Outlook",
+  "Active Alerts — Michigan"
+];
+const SLIDE_INTERVAL = 10000;
+let currentSlide = 0;
+let slideshowTimer = null;
+let paused = false;
+
+// ---- Weather fetch (no custom User-Agent — breaks CORS) ----
 async function fetchWeather() {
+  const tempEl = document.getElementById("temperature");
+  const descEl = document.getElementById("description");
+  const windEl = document.getElementById("wind-speed");
+
   try {
     const gridRes = await fetch(`https://api.weather.gov/points/${LAT},${LON}`);
     if (!gridRes.ok) throw new Error("Grid lookup failed");
@@ -16,81 +30,123 @@ async function fetchWeather() {
 
     const forecastData = await forecastRes.json();
     const stationData = await stationRes.json();
-    const current = forecastData.properties.periods[0];
+    const currentForecast = forecastData.properties.periods?.[0] ?? null;
+
+    if (!stationData.features?.length) throw new Error("No stations returned");
 
     const stationId = stationData.features[0].properties.stationIdentifier;
     const obsRes = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`);
-    const obsData = await obsRes.json();
 
-    const tempC = obsData.properties.temperature.value;
-    const tempF = tempC !== null ? (tempC * 9/5 + 32).toFixed(1) : "--";
-    const windMps = obsData.properties.windSpeed.value;
-    const windMph = windMps !== null ? (windMps * 2.237).toFixed(0) : null;
-    const windDir = obsData.properties.windDirection.value;
+    let tempF = "--", shortForecast = currentForecast?.shortForecast ?? "--", windString = "N/A";
 
-    const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-    const dirLabel = windDir !== null ? dirs[Math.round(windDir / 22.5) % 16] : "";
+    if (obsRes.ok) {
+      const props = (await obsRes.json()).properties;
+      if (props.temperature?.value != null) {
+        tempF = (props.temperature.value * 9/5 + 32).toFixed(1) + "°F";
+      } else if (currentForecast?.temperature != null) {
+        tempF = `${currentForecast.temperature}°F`;
+      }
+      if (props.windSpeed?.value != null) {
+        const mph = (props.windSpeed.value * 2.237).toFixed(0);
+        const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
+        const dir = props.windDirection?.value != null ? dirs[Math.round(props.windDirection.value / 22.5) % 16] : "";
+        windString = `${mph} mph ${dir}`.trim();
+      } else if (currentForecast?.windSpeed) {
+        windString = `${currentForecast.windSpeed} ${currentForecast.windDirection ?? ""}`.trim();
+      }
+    } else if (currentForecast) {
+      tempF = `${currentForecast.temperature}°F`;
+      windString = `${currentForecast.windSpeed} ${currentForecast.windDirection ?? ""}`.trim();
+    }
 
-    const tempEl = document.getElementById("temperature");
-    const descEl = document.getElementById("description");
-    const windEl = document.getElementById("wind-speed");
-
-    if (tempEl) tempEl.textContent = tempF !== "--" ? `${tempF}°F` : "--";
-    if (descEl) descEl.textContent = current.shortForecast || "--";
-    if (windEl) windEl.textContent = windMph ? `${windMph} mph ${dirLabel}`.trim() : "N/A";
+    if (tempEl) tempEl.textContent = tempF;
+    if (descEl) descEl.textContent = shortForecast;
+    if (windEl) windEl.textContent = windString;
 
   } catch (err) {
     console.error("Weather fetch error:", err);
-    const tempEl = document.getElementById("temperature");
     if (tempEl) tempEl.textContent = "Unavailable";
+    if (descEl) descEl.textContent = "Check weather.gov";
+    if (windEl) windEl.textContent = "N/A";
   }
 }
 
-async function fetchActiveAlerts() {
-  const alertsContainer = document.getElementById("alerts-container");
-  if (!alertsContainer) return;
-
+// ---- SPC Day 1 outlook text ----
+async function fetchSPCOutlook() {
+  const el = document.getElementById("spc-outlook-content");
+  if (!el) return;
   try {
-    // Fetches active alerts specifically filtering for Michigan
+    // NWS products API — SPC Day 1 convective outlook (product type: SWODY1)
+    const res = await fetch("https://api.weather.gov/products/types/SWODY1/locations/KWNS");
+    if (!res.ok) throw new Error("SPC product list failed");
+    const data = await res.json();
+    const latest = data["@graph"]?.[0];
+    if (!latest) throw new Error("No outlook found");
+
+    const prodRes = await fetch(latest["@id"]);
+    if (!prodRes.ok) throw new Error("SPC product fetch failed");
+    const prod = await prodRes.json();
+
+    // Grab just the first two paragraphs of the text
+    const raw = prod.productText || "";
+    const clean = raw
+      .replace(/\r/g, "")
+      .split("\n\n")
+      .filter(p => p.trim().length > 40)   // skip short header lines
+      .slice(0, 3)
+      .join("\n\n")
+      .trim();
+
+    el.innerHTML = `<p class="wx-outlook-text">${clean.replace(/\n\n/g, "</p><p class='wx-outlook-text'>")}</p>`;
+  } catch (err) {
+    console.error("SPC outlook error:", err);
+    el.innerHTML = `<p class="wx-loading">Outlook unavailable — <a href="https://www.spc.noaa.gov/products/outlook/" target="_blank" rel="noopener">view on SPC</a></p>`;
+  }
+}
+
+// ---- Active alerts for Michigan ----
+async function fetchAlerts() {
+  const el = document.getElementById("alerts-content");
+  if (!el) return;
+  try {
     const res = await fetch("https://api.weather.gov/alerts/active?area=MI");
     if (!res.ok) throw new Error("Alerts fetch failed");
     const data = await res.json();
+    const alerts = data.features ?? [];
 
-    // Filter out alerts to find ones covering your zone/county if you want to make it purely local, 
-    // or display the most severe statewide convective/synoptic impacts.
-    const activeAlerts = data.features || [];
-
-    if (activeAlerts.length === 0) {
-      alertsContainer.innerHTML = `<div class="no-alerts">No active watches, warnings, or advisories for Michigan.</div>`;
+    if (alerts.length === 0) {
+      el.innerHTML = `<p class="wx-no-alerts">✓ No active watches, warnings, or advisories for Michigan.</p>`;
       return;
     }
 
-    // Grab up to 4 prominent alerts to avoid page overflowing
-    let alertsHtml = `<div class="alerts-list">`;
-    activeAlerts.slice(0, 4).forEach(alert => {
-      const props = alert.properties;
-      alertsHtml += `
-        <div class="alert-item ${props.severity.toLowerCase()}">
-          <span class="alert-event">${props.event}</span>
-          <p class="alert-headline">${props.headline || props.description.substring(0, 100) + '...'}</p>
-        </div>
-      `;
-    });
-    alertsHtml += `</div>`;
-    alertsContainer.innerHTML = alertsHtml;
+    const severityClass = s => {
+      if (s === "Extreme")  return "alert-extreme";
+      if (s === "Severe")   return "alert-severe";
+      return "alert-moderate";
+    };
+
+    el.innerHTML = alerts.slice(0, 4).map(a => {
+      const p = a.properties;
+      return `<div class="wx-alert-item ${severityClass(p.severity)}">
+        <span class="wx-alert-event">${p.event}</span>
+        <p class="wx-alert-headline">${p.headline ?? p.description?.substring(0, 120) + "…" ?? ""}</p>
+      </div>`;
+    }).join("");
 
   } catch (err) {
-    console.error("Alerts fetch error:", err);
-    alertsContainer.innerHTML = `<div class="no-alerts">Unable to load active alerts.</div>`;
+    console.error("Alerts error:", err);
+    el.innerHTML = `<p class="wx-loading">Unable to load alerts.</p>`;
   }
 }
 
+// ---- Radar map ----
 function initRadarMap() {
   const mapEl = document.getElementById("radar-map");
   if (!mapEl) return;
 
-  // Leaflet doesn't always play well when initialized inside hidden display blocks.
-  // We'll reset sizes or re-initialize safely if needed.
+  const slide0 = document.getElementById("wx-slide-0");
+  if (slide0) slide0.classList.add("active");
+
   radarMapInstance = L.map("radar-map", { zoomControl: false, attributionControl: false })
     .setView([LAT, LON], 7);
 
@@ -106,80 +162,62 @@ function initRadarMap() {
   }).addTo(radarMapInstance);
 }
 
-// Slideshow Controller Logic
-// --- Updated Slideshow Controller Logic with Manual Override ---
-let currentSlideIndex = 0;
-let slideshowTimer = null;
+// ---- Slideshow ----
+function goToSlide(index) {
+  const slides = document.querySelectorAll(".wx-slide");
+  const dots = document.querySelectorAll(".wx-dot");
+  const label = document.getElementById("wx-slide-label");
+  if (!slides.length) return;
 
-function showSlide(index) {
-  const slides = document.querySelectorAll(".weather-slide");
-  const dots = document.querySelectorAll(".dot");
-  const sectionLabel = document.getElementById("slideshow-label");
+  currentSlide = ((index % slides.length) + slides.length) % slides.length;
+  slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+  dots.forEach((d, i) => d.classList.toggle("active", i === currentSlide));
+  if (label) label.textContent = SLIDE_LABELS[currentSlide];
 
-  if (slides.length === 0) return;
-
-  // Bound check to keep index in range
-  if (index >= slides.length) currentSlideIndex = 0;
-  else if (index < 0) currentSlideIndex = slides.length - 1;
-  else currentSlideIndex = index;
-
-  // Remove active styling classes from everything
-  slides.forEach(slide => slide.classList.remove("active-slide"));
-  dots.forEach(dot => dot.classList.remove("active-dot"));
-
-  // Reveal the targeted slide and activate its corresponding dot
-  const currentSlide = slides[currentSlideIndex];
-  currentSlide.classList.add("active-slide");
-  if (dots[currentSlideIndex]) dots[currentSlideIndex].classList.add("active-dot");
-  
-  // Update the card's section header text dynamically
-  if (sectionLabel && currentSlide.dataset.label) {
-    sectionLabel.textContent = currentSlide.dataset.label;
-  }
-
-  // Leaflet map layout fix for Slide 1
-  if (currentSlideIndex === 0 && radarMapInstance) {
-    setTimeout(() => {
-      radarMapInstance.invalidateSize();
-    }, 50);
+  if (currentSlide === 0 && radarMapInstance) {
+    setTimeout(() => radarMapInstance.invalidateSize(), 50);
   }
 }
 
-// Function to handle automatic rotation
-function startSlideshow() {
-  slideshowTimer = setInterval(() => {
-    showSlide(currentSlideIndex + 1);
-  }, 10000); // 10 seconds
-}
-
-// Manual Override Function: triggered when a user clicks a dot
-function manualSelectSlide(index) {
-  // 1. Stop the automatic timer immediately
+function startTimer() {
   clearInterval(slideshowTimer);
-
-  // 2. Jump directly to the selected slide
-  showSlide(index);
-
-  // 3. Optional: Restart the auto-rotation loop after 20 seconds of user inactivity
-  startSlideshow();
+  slideshowTimer = setInterval(() => {
+    if (!paused) goToSlide(currentSlide + 1);
+  }, SLIDE_INTERVAL);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  fetchWeather();
-  fetchActiveAlerts();
-  initRadarMap();
-
-  // Initialize the first slide view
-  showSlide(0);
-
-  // Map the manual click event override to each navigation dot
-  const dots = document.querySelectorAll(".dot");
-  dots.forEach((dot, index) => {
+function initSlideshow() {
+  document.querySelectorAll(".wx-dot").forEach(dot => {
     dot.addEventListener("click", () => {
-      manualSelectSlide(index);
+      goToSlide(parseInt(dot.dataset.slide));
+      startTimer();
     });
   });
 
-  // Start the automatic rotation engine
-  startSlideshow();
+  const pauseBtn = document.getElementById("wx-pause");
+  if (pauseBtn) {
+    pauseBtn.addEventListener("click", () => {
+      paused = !paused;
+      pauseBtn.innerHTML = paused ? "&#9654;" : "&#10074;&#10074;";
+      pauseBtn.setAttribute("aria-label", paused ? "Resume slideshow" : "Pause slideshow");
+    });
+  }
+
+  goToSlide(0);
+  startTimer();
+}
+
+// ---- Init ----
+document.addEventListener("DOMContentLoaded", () => {
+  fetchWeather();
+  fetchSPCOutlook();
+  fetchAlerts();
+  initSlideshow();
+  setInterval(fetchWeather, 300000);
+  setInterval(() => { fetchSPCOutlook(); fetchAlerts(); }, 600000);
+});
+
+window.addEventListener("load", () => {
+  initRadarMap();
+  setTimeout(() => { if (radarMapInstance) radarMapInstance.invalidateSize(); }, 200);
 });
