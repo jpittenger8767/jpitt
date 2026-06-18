@@ -82,6 +82,10 @@ function initRadarMap() {
   const mapEl = document.getElementById("radar-map");
   if (!mapEl) return;
 
+  // Ensure slide 0 is visible before Leaflet measures the container
+  const slide0 = document.getElementById("wx-slide-0");
+  if (slide0) slide0.classList.add("active");
+
   radarMapInstance = L.map("radar-map", { zoomControl: false, attributionControl: false })
     .setView([LAT, LON], 7);
 
@@ -154,9 +158,17 @@ function initSlideshow() {
 // ---- Init ----
 document.addEventListener("DOMContentLoaded", () => {
   fetchWeather();
-  initRadarMap();
   initSlideshow();
 
   // Refresh weather data every 5 minutes
   setInterval(fetchWeather, 300000);
+});
+
+// Init radar AFTER full page load so Leaflet has real dimensions
+window.addEventListener("load", () => {
+  initRadarMap();
+  // Give Leaflet a beat to settle, then correct any size issues
+  setTimeout(() => {
+    if (radarMapInstance) radarMapInstance.invalidateSize();
+  }, 200);
 });
