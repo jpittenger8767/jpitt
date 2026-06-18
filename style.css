@@ -370,60 +370,57 @@ img { display: block; max-width: 100%; }
   height: 100%;
 }
 
-/* ---- Slides 1 & 2: SPC images ---- */
-.wx-img-container {
-  position: relative;
-  width: 100%;
-  border-radius: 8px;
-  overflow: hidden;
-  border: 0.5px solid #182220;
-  background: #0a0f0d;
-  /* Match the radar height so card doesn't jump between slides */
-  height: 180px;
+/* ---- Slides 1 & 2: text content ---- */
+.wx-text-slide {
+  min-height: 140px;
+  max-height: 180px;
+  overflow-y: auto;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px 0;
+  scrollbar-width: thin;
+  scrollbar-color: #1e3830 transparent;
 }
-.wx-spc-img {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-  display: block;
+.wx-loading {
+  font-size: 13px;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 16px 0;
 }
-.wx-img-link {
-  position: absolute;
-  bottom: 8px;
-  right: 10px;
+.wx-no-alerts {
+  font-size: 13px;
+  color: var(--green);
+  padding: 16px 0;
+}
+.wx-outlook-text {
+  font-size: 12.5px;
+  color: var(--text-body);
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+.wx-alert-item {
+  border-left: 2.5px solid #2a4a3a;
+  padding: 8px 12px;
+  border-radius: 0 6px 6px 0;
+  background: #0e1412;
+}
+.wx-alert-item.alert-extreme { border-left-color: #c04040; background: #120c0c; }
+.wx-alert-item.alert-severe  { border-left-color: #c07820; background: #12100a; }
+.wx-alert-item.alert-moderate{ border-left-color: #8a8a20; background: #111208; }
+.wx-alert-event { font-size: 13px; font-weight: 500; color: #b0d0c0; display: block; margin-bottom: 3px; }
+.wx-alert-headline { font-size: 12px; color: var(--text-muted); line-height: 1.5; }
+.wx-slide-extlink {
+  display: inline-block;
+  margin-top: 10px;
   font-size: 11px;
   color: var(--green);
-  background: rgba(8,10,10,0.75);
-  padding: 3px 8px;
-  border-radius: 4px;
+  border-bottom: 0.5px solid var(--green-dim);
+  padding-bottom: 1px;
   text-decoration: none;
   transition: color 0.2s;
 }
-.wx-img-link:hover { color: #8dd47a; text-decoration: none; }
-
-/* ---- Skeleton loader ---- */
-@keyframes shimmer {
-  0%   { background-position: -400px 0; }
-  100% { background-position: 400px 0; }
-}
-.wx-skeleton {
-  position: absolute;
-  inset: 0;
-  border-radius: 8px;
-  background: linear-gradient(
-    90deg,
-    #0e1412 25%,
-    #182220 50%,
-    #0e1412 75%
-  );
-  background-size: 800px 100%;
-  animation: shimmer 1.6s infinite linear;
-  z-index: 1;
-}
-.wx-spc-img { position: relative; z-index: 2; }
+.wx-slide-extlink:hover { color: #8dd47a; text-decoration: none; }
 
 /* ---- Projects page ---- */
 .projects-grid {

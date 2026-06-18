@@ -1,35 +1,31 @@
 const LAT = 43.3370;
 const LON = -83.3525;
-const LOCATION_NAME = "Mayville, MI";
 let radarMapInstance = null;
 
 const SLIDE_LABELS = [
   "Current conditions — Mayville, MI",
   "SPC Day 1 Convective Outlook",
-  "Current Watches & Warnings"
+  "Active Alerts — Michigan"
 ];
 const SLIDE_INTERVAL = 10000;
-
 let currentSlide = 0;
 let slideshowTimer = null;
 let paused = false;
 
-// ---- Weather fetch ----
+// ---- Weather fetch (no custom User-Agent — breaks CORS) ----
 async function fetchWeather() {
   const tempEl = document.getElementById("temperature");
   const descEl = document.getElementById("description");
   const windEl = document.getElementById("wind-speed");
 
-  const opts = { headers: { 'User-Agent': '(pittweather-dashboard, jpittenger8767)' } };
-
   try {
-    const gridRes = await fetch(`https://api.weather.gov/points/${LAT},${LON}`, opts);
+    const gridRes = await fetch(`https://api.weather.gov/points/${LAT},${LON}`);
     if (!gridRes.ok) throw new Error("Grid lookup failed");
     const gridData = await gridRes.json();
 
     const [forecastRes, stationRes] = await Promise.all([
-      fetch(gridData.properties.forecast, opts),
-      fetch(gridData.properties.observationStations, opts)
+      fetch(gridData.properties.forecast),
+      fetch(gridData.properties.observationStations)
     ]);
 
     const forecastData = await forecastRes.json();
@@ -39,19 +35,17 @@ async function fetchWeather() {
     if (!stationData.features?.length) throw new Error("No stations returned");
 
     const stationId = stationData.features[0].properties.stationIdentifier;
-    const obsRes = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`, opts);
+    const obsRes = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`);
 
     let tempF = "--", shortForecast = currentForecast?.shortForecast ?? "--", windString = "N/A";
 
     if (obsRes.ok) {
       const props = (await obsRes.json()).properties;
-
       if (props.temperature?.value != null) {
         tempF = (props.temperature.value * 9/5 + 32).toFixed(1) + "°F";
       } else if (currentForecast?.temperature != null) {
         tempF = `${currentForecast.temperature}°F`;
       }
-
       if (props.windSpeed?.value != null) {
         const mph = (props.windSpeed.value * 2.237).toFixed(0);
         const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
@@ -72,8 +66,76 @@ async function fetchWeather() {
   } catch (err) {
     console.error("Weather fetch error:", err);
     if (tempEl) tempEl.textContent = "Unavailable";
-    if (descEl) descEl.textContent = "Error loading";
+    if (descEl) descEl.textContent = "Check weather.gov";
     if (windEl) windEl.textContent = "N/A";
+  }
+}
+
+// ---- SPC Day 1 outlook text ----
+async function fetchSPCOutlook() {
+  const el = document.getElementById("spc-outlook-content");
+  if (!el) return;
+  try {
+    // NWS products API — SPC Day 1 convective outlook (product type: SWODY1)
+    const res = await fetch("https://api.weather.gov/products/types/SWODY1/locations/KWNS");
+    if (!res.ok) throw new Error("SPC product list failed");
+    const data = await res.json();
+    const latest = data["@graph"]?.[0];
+    if (!latest) throw new Error("No outlook found");
+
+    const prodRes = await fetch(latest["@id"]);
+    if (!prodRes.ok) throw new Error("SPC product fetch failed");
+    const prod = await prodRes.json();
+
+    // Grab just the first two paragraphs of the text
+    const raw = prod.productText || "";
+    const clean = raw
+      .replace(/\r/g, "")
+      .split("\n\n")
+      .filter(p => p.trim().length > 40)   // skip short header lines
+      .slice(0, 3)
+      .join("\n\n")
+      .trim();
+
+    el.innerHTML = `<p class="wx-outlook-text">${clean.replace(/\n\n/g, "</p><p class='wx-outlook-text'>")}</p>`;
+  } catch (err) {
+    console.error("SPC outlook error:", err);
+    el.innerHTML = `<p class="wx-loading">Outlook unavailable — <a href="https://www.spc.noaa.gov/products/outlook/" target="_blank" rel="noopener">view on SPC</a></p>`;
+  }
+}
+
+// ---- Active alerts for Michigan ----
+async function fetchAlerts() {
+  const el = document.getElementById("alerts-content");
+  if (!el) return;
+  try {
+    const res = await fetch("https://api.weather.gov/alerts/active?area=MI");
+    if (!res.ok) throw new Error("Alerts fetch failed");
+    const data = await res.json();
+    const alerts = data.features ?? [];
+
+    if (alerts.length === 0) {
+      el.innerHTML = `<p class="wx-no-alerts">✓ No active watches, warnings, or advisories for Michigan.</p>`;
+      return;
+    }
+
+    const severityClass = s => {
+      if (s === "Extreme")  return "alert-extreme";
+      if (s === "Severe")   return "alert-severe";
+      return "alert-moderate";
+    };
+
+    el.innerHTML = alerts.slice(0, 4).map(a => {
+      const p = a.properties;
+      return `<div class="wx-alert-item ${severityClass(p.severity)}">
+        <span class="wx-alert-event">${p.event}</span>
+        <p class="wx-alert-headline">${p.headline ?? p.description?.substring(0, 120) + "…" ?? ""}</p>
+      </div>`;
+    }).join("");
+
+  } catch (err) {
+    console.error("Alerts error:", err);
+    el.innerHTML = `<p class="wx-loading">Unable to load alerts.</p>`;
   }
 }
 
@@ -82,7 +144,6 @@ function initRadarMap() {
   const mapEl = document.getElementById("radar-map");
   if (!mapEl) return;
 
-  // Ensure slide 0 is visible before Leaflet measures the container
   const slide0 = document.getElementById("wx-slide-0");
   if (slide0) slide0.classList.add("active");
 
@@ -109,17 +170,10 @@ function goToSlide(index) {
   if (!slides.length) return;
 
   currentSlide = ((index % slides.length) + slides.length) % slides.length;
-
-  slides.forEach((s, i) => {
-    s.classList.toggle("active", i === currentSlide);
-  });
-  dots.forEach((d, i) => {
-    d.classList.toggle("active", i === currentSlide);
-  });
-
+  slides.forEach((s, i) => s.classList.toggle("active", i === currentSlide));
+  dots.forEach((d, i) => d.classList.toggle("active", i === currentSlide));
   if (label) label.textContent = SLIDE_LABELS[currentSlide];
 
-  // Leaflet needs a nudge when its container becomes visible
   if (currentSlide === 0 && radarMapInstance) {
     setTimeout(() => radarMapInstance.invalidateSize(), 50);
   }
@@ -133,16 +187,14 @@ function startTimer() {
 }
 
 function initSlideshow() {
-  const dots = document.querySelectorAll(".wx-dot");
-  const pauseBtn = document.getElementById("wx-pause");
-
-  dots.forEach(dot => {
+  document.querySelectorAll(".wx-dot").forEach(dot => {
     dot.addEventListener("click", () => {
       goToSlide(parseInt(dot.dataset.slide));
-      startTimer(); // reset interval on manual nav
+      startTimer();
     });
   });
 
+  const pauseBtn = document.getElementById("wx-pause");
   if (pauseBtn) {
     pauseBtn.addEventListener("click", () => {
       paused = !paused;
@@ -158,17 +210,14 @@ function initSlideshow() {
 // ---- Init ----
 document.addEventListener("DOMContentLoaded", () => {
   fetchWeather();
+  fetchSPCOutlook();
+  fetchAlerts();
   initSlideshow();
-
-  // Refresh weather data every 5 minutes
   setInterval(fetchWeather, 300000);
+  setInterval(() => { fetchSPCOutlook(); fetchAlerts(); }, 600000);
 });
 
-// Init radar AFTER full page load so Leaflet has real dimensions
 window.addEventListener("load", () => {
   initRadarMap();
-  // Give Leaflet a beat to settle, then correct any size issues
-  setTimeout(() => {
-    if (radarMapInstance) radarMapInstance.invalidateSize();
-  }, 200);
+  setTimeout(() => { if (radarMapInstance) radarMapInstance.invalidateSize(); }, 200);
 });

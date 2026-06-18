@@ -88,29 +88,20 @@
         </div>
       </div>
 
-      <!-- Slide 1: SPC Day 1 outlook -->
+      <!-- Slide 1: SPC Day 1 outlook summary -->
       <div class="wx-slide" id="wx-slide-1">
-        <div class="wx-img-container">
-          <div class="wx-skeleton" id="spc-skeleton-1"></div>
-          <img src="https://www.spc.noaa.gov/products/outlook/day1otlk_1200.gif"
-               alt="SPC Day 1 Convective Outlook"
-               class="wx-spc-img"
-               onload="this.previousElementSibling.style.display='none'"
-               onerror="this.src='https://www.spc.noaa.gov/products/outlook/day1otlk.gif'">
-          <a href="https://www.spc.noaa.gov/products/outlook/" target="_blank" rel="noopener" class="wx-img-link">View on SPC →</a>
+        <div class="wx-text-slide" id="spc-outlook-content">
+          <p class="wx-loading">Loading outlook...</p>
         </div>
+        <a href="https://www.spc.noaa.gov/products/outlook/" target="_blank" rel="noopener" class="wx-slide-extlink">View full outlook on SPC →</a>
       </div>
 
-      <!-- Slide 2: Watches & warnings -->
+      <!-- Slide 2: Active alerts -->
       <div class="wx-slide" id="wx-slide-2">
-        <div class="wx-img-container">
-          <div class="wx-skeleton" id="spc-skeleton-2"></div>
-          <img src="https://www.spc.noaa.gov/products/watch/validww.png"
-               alt="Current Watches and Warnings"
-               class="wx-spc-img"
-               onload="this.previousElementSibling.style.display='none'">
-          <a href="https://www.spc.noaa.gov/products/watch/" target="_blank" rel="noopener" class="wx-img-link">View on SPC →</a>
+        <div class="wx-text-slide" id="alerts-content">
+          <p class="wx-loading">Checking for active alerts...</p>
         </div>
+        <a href="https://www.weather.gov/dtx/" target="_blank" rel="noopener" class="wx-slide-extlink">View NWS Detroit/Pontiac →</a>
       </div>
 
     </div>
