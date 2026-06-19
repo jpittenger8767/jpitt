@@ -506,6 +506,33 @@ img { display: block; max-width: 100%; }
 .contact-item-name { font-size: 14px; font-weight: 500; color: #b0d0c0; }
 .contact-item-handle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
 
+/* ---- Guestbook ---- */
+.guestbook {
+  margin-top: 2rem;
+  padding-top: 1.75rem;
+  border-top: 0.5px solid var(--border-faint);
+  animation: fadeInUp 0.6s ease 0.4s both;
+}
+.section-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 6px;
+}
+.section-subtitle {
+  font-size: 13px;
+  color: var(--text-body);
+  margin-bottom: 1.25rem;
+  line-height: 1.6;
+}
+.guestbook .giscus,
+.guestbook .giscus-frame {
+  width: 100%;
+}
+.guestbook .giscus-frame {
+  border: none;
+}
+
 /* ---- Footer ---- */
 .site-footer {
   padding: 1.25rem 2rem;
