@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>?? | Joseph</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="icon" type="image/png" href="images/favicon.jpg">
+  <style>
+    .egg-wrap {
+      min-height: 86vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 32px 20px;
+    }
+    .egg-wrap h1 {
+      color: var(--magenta);
+      font-size: 20px;
+      margin-bottom: 4px;
+    }
+    .egg-wrap .egg-sub {
+      color: var(--text-body);
+      font-size: 13px;
+      margin-bottom: 22px;
+    }
+
+    .pong-card {
+      background: var(--bg-card);
+      border: 0.5px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    .pong-score {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 28px;
+      margin-bottom: 14px;
+      font-size: 13px;
+      color: var(--text-body);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .pong-score .you,
+    .pong-score .cpu {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+    }
+    .pong-score .you span:last-child { color: var(--green); font-size: 22px; font-weight: 600; }
+    .pong-score .cpu span:last-child { color: var(--magenta); font-size: 22px; font-weight: 600; }
+    .pong-score .divider { color: var(--text-dim); font-size: 16px; }
+
+    #pong-canvas {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      background: var(--bg);
+      border: 0.5px solid var(--border-faint);
+      border-radius: 8px;
+      touch-action: none;
+      cursor: none;
+    }
+
+    .pong-hint {
+      margin-top: 12px;
+      font-size: 11.5px;
+      color: var(--text-muted);
+    }
+
+    .pong-overlay-msg {
+      margin-top: 14px;
+      font-size: 14px;
+      color: var(--text-primary);
+      min-height: 20px;
+    }
+    .pong-overlay-msg.win { color: var(--green); }
+    .pong-overlay-msg.lose { color: var(--magenta); }
+
+    .pong-replay {
+      margin-top: 10px;
+      background: transparent;
+      border: 0.5px solid var(--green-dim);
+      color: var(--green);
+      font-size: 12.5px;
+      padding: 7px 16px;
+      border-radius: 7px;
+      cursor: pointer;
+      display: none;
+      transition: border-color 0.2s ease, color 0.2s ease;
+    }
+    .pong-replay:hover { border-color: var(--green); color: #8dd47a; }
+    .pong-replay.show { display: inline-block; }
+
+    .egg-back {
+      margin-top: 22px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .egg-back:hover { color: var(--green); }
+  </style>
+</head>
+<body>
+
+  <main class="egg-wrap">
+    <h1>You found it.</h1>
+    <p class="egg-sub">First to 11 wins. Good luck.</p>
+
+    <div class="pong-card">
+      <div class="pong-score">
+        <span class="you">YOU <span id="score-you">0</span></span>
+        <span class="divider">/</span>
+        <span class="cpu">CPU <span id="score-cpu">0</span></span>
+      </div>
+
+      <canvas id="pong-canvas" width="800" height="500"></canvas>
+
+      <p class="pong-hint" id="pong-hint">Move your mouse, or drag with your finger, to control the paddle.</p>
+      <div class="pong-overlay-msg" id="pong-msg"></div>
+      <button class="pong-replay" id="pong-replay">Play again</button>
+    </div>
+
+    <a href="index.html" class="egg-back">← Back home</a>
+  </main>
+
+  <script>
+  (function () {
+    const canvas = document.getElementById('pong-canvas');
+    const ctx = canvas.getContext('2d');
+    const scoreYouEl = document.getElementById('score-you');
+    const scoreCpuEl = document.getElementById('score-cpu');
+    const msgEl = document.getElementById('pong-msg');
+    const replayBtn = document.getElementById('pong-replay');
+    const hintEl = document.getElementById('pong-hint');
+
+    // Logical game space stays fixed; canvas CSS size can scale responsively.
+    const W = canvas.width;
+    const H = canvas.height;
+
+    const COLOR_BG = '#080a0a';
+    const COLOR_LINE = '#172020';
+    const COLOR_BALL = '#e8f4f0';
+    const COLOR_YOU = '#5aaf7a';
+    const COLOR_CPU = '#c078a8';
+
+    const PADDLE_W = 10;
+    const PADDLE_H = 80;
+    const BALL_R = 7;
+    const WIN_SCORE = 11;
+
+    let youY = H / 2 - PADDLE_H / 2;
+    let cpuY = H / 2 - PADDLE_H / 2;
+    let youScore = 0;
+    let cpuScore = 0;
+    let running = true;
+    let gameOver = false;
+
+    let ball = { x: W / 2, y: H / 2, vx: 0, vy: 0 };
+    let trail = [];
+
+    function resetBall(direction) {
+      ball.x = W / 2;
+      ball.y = H / 2;
+      const angle = (Math.random() * 0.5 - 0.25) * Math.PI;
+      const speed = 4;
+      ball.vx = Math.cos(angle) * speed * direction;
+      ball.vy = Math.sin(angle) * speed;
+      trail = [];
+    }
+    resetBall(Math.random() < 0.5 ? 1 : -1);
+
+    // ---- Input: mouse + touch, mapped to canvas's actual rendered size ----
+    function setPaddleFromClientY(clientY) {
+      const rect = canvas.getBoundingClientRect();
+      const relY = (clientY - rect.top) / rect.height;
+      youY = relY * H - PADDLE_H / 2;
+      youY = Math.max(0, Math.min(H - PADDLE_H, youY));
+    }
+
+    canvas.addEventListener('mousemove', function (e) {
+      setPaddleFromClientY(e.clientY);
+    });
+    canvas.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+      if (e.touches.length > 0) setPaddleFromClientY(e.touches[0].clientY);
+    }, { passive: false });
+    canvas.addEventListener('touchstart', function (e) {
+      if (e.touches.length > 0) setPaddleFromClientY(e.touches[0].clientY);
+    });
+
+    function updateScoreDisplay() {
+      scoreYouEl.textContent = youScore;
+      scoreCpuEl.textContent = cpuScore;
+    }
+
+    function endGame(didWin) {
+      gameOver = true;
+      running = false;
+      msgEl.textContent = didWin ? 'You win.' : 'CPU wins.';
+      msgEl.className = 'pong-overlay-msg ' + (didWin ? 'win' : 'lose');
+      replayBtn.classList.add('show');
+    }
+
+    function step() {
+      if (!running) return;
+
+      // CPU paddle: tracks the ball with limited speed + slight imperfection
+      const cpuTarget = ball.y - PADDLE_H / 2;
+      const cpuSpeed = 3.6;
+      if (Math.abs(cpuY - cpuTarget) > cpuSpeed) {
+        cpuY += cpuY < cpuTarget ? cpuSpeed : -cpuSpeed;
+      } else {
+        cpuY = cpuTarget;
+      }
+      cpuY = Math.max(0, Math.min(H - PADDLE_H, cpuY));
+
+      // Ball movement
+      ball.x += ball.vx;
+      ball.y += ball.vy;
+
+      trail.push({ x: ball.x, y: ball.y });
+      if (trail.length > 10) trail.shift();
+
+      // Top/bottom bounce
+      if (ball.y - BALL_R < 0) {
+        ball.y = BALL_R;
+        ball.vy *= -1;
+      } else if (ball.y + BALL_R > H) {
+        ball.y = H - BALL_R;
+        ball.vy *= -1;
+      }
+
+      // Left paddle (you) collision
+      const youX = 22;
+      if (
+        ball.x - BALL_R < youX + PADDLE_W &&
+        ball.x - BALL_R > youX &&
+        ball.y > youY &&
+        ball.y < youY + PADDLE_H &&
+        ball.vx < 0
+      ) {
+        ball.x = youX + PADDLE_W + BALL_R;
+        ball.vx *= -1.03;
+        const hitPos = (ball.y - (youY + PADDLE_H / 2)) / (PADDLE_H / 2);
+        ball.vy += hitPos * 2.5;
+      }
+
+      // Right paddle (cpu) collision
+      const cpuX = W - 22 - PADDLE_W;
+      if (
+        ball.x + BALL_R > cpuX &&
+        ball.x + BALL_R < cpuX + PADDLE_W &&
+        ball.y > cpuY &&
+        ball.y < cpuY + PADDLE_H &&
+        ball.vx > 0
+      ) {
+        ball.x = cpuX - BALL_R;
+        ball.vx *= -1.03;
+        const hitPos = (ball.y - (cpuY + PADDLE_H / 2)) / (PADDLE_H / 2);
+        ball.vy += hitPos * 2.5;
+      }
+
+      // Cap speed so it doesn't spiral out of control
+      const maxSpeed = 11;
+      const sp = Math.hypot(ball.vx, ball.vy);
+      if (sp > maxSpeed) {
+        ball.vx = (ball.vx / sp) * maxSpeed;
+        ball.vy = (ball.vy / sp) * maxSpeed;
+      }
+
+      // Scoring
+      if (ball.x < -BALL_R * 2) {
+        cpuScore++;
+        updateScoreDisplay();
+        if (cpuScore >= WIN_SCORE) { draw(); endGame(false); return; }
+        resetBall(1);
+      } else if (ball.x > W + BALL_R * 2) {
+        youScore++;
+        updateScoreDisplay();
+        if (youScore >= WIN_SCORE) { draw(); endGame(true); return; }
+        resetBall(-1);
+      }
+
+      draw();
+      requestAnimationFrame(step);
+    }
+
+    function draw() {
+      ctx.fillStyle = COLOR_BG;
+      ctx.fillRect(0, 0, W, H);
+
+      // center dashed line
+      ctx.strokeStyle = COLOR_LINE;
+      ctx.lineWidth = 2;
+      ctx.setLineDash([6, 10]);
+      ctx.beginPath();
+      ctx.moveTo(W / 2, 0);
+      ctx.lineTo(W / 2, H);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // paddles
+      const youX = 22;
+      const cpuX = W - 22 - PADDLE_W;
+      ctx.fillStyle = COLOR_YOU;
+      roundRect(youX, youY, PADDLE_W, PADDLE_H, 3);
+      ctx.fillStyle = COLOR_CPU;
+      roundRect(cpuX, cpuY, PADDLE_W, PADDLE_H, 3);
+
+      // ball trail (faint aurora-style streak)
+      for (let i = 0; i < trail.length; i++) {
+        const t = trail[i];
+        const alpha = (i / trail.length) * 0.22;
+        ctx.fillStyle = 'rgba(192, 120, 168, ' + alpha + ')';
+        ctx.beginPath();
+        ctx.arc(t.x, t.y, BALL_R * 0.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // ball
+      ctx.fillStyle = COLOR_BALL;
+      ctx.beginPath();
+      ctx.arc(ball.x, ball.y, BALL_R, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function roundRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    replayBtn.addEventListener('click', function () {
+      youScore = 0;
+      cpuScore = 0;
+      updateScoreDisplay();
+      msgEl.textContent = '';
+      msgEl.className = 'pong-overlay-msg';
+      replayBtn.classList.remove('show');
+      gameOver = false;
+      running = true;
+      resetBall(Math.random() < 0.5 ? 1 : -1);
+      requestAnimationFrame(step);
+    });
+
+    // Hide the mouse hint on touch devices
+    if (matchMedia('(pointer: coarse)').matches) {
+      hintEl.textContent = 'Drag your finger on the board to control the paddle.';
+    }
+
+    draw();
+    requestAnimationFrame(step);
+  })();
+  </script>
+
+</body>
+</html>

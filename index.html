@@ -37,8 +37,11 @@
   </div>
 
   <div class="bio-row">
-    <div class="bio-photo">
-      <img src="images/slide1.jpg" alt="Joe Pittenger">
+    <div class="bio-photo-wrap">
+      <div class="bio-photo" id="bio-photo">
+        <img src="images/slide1.jpg" alt="Joe Pittenger">
+      </div>
+      <span class="egg-counter" id="egg-counter"></span>
     </div>
     <div class="bio-text">
       <p>I am an upcoming college freshman at the University of Oklahoma and a future meteorologist. I'm passionate about weather, robotics, and programming — currently expanding my skills and planning to study atmospheric science in college.</p>
@@ -132,6 +135,44 @@
       <a href="contact.html">Contact</a>
     </div>
   </footer>
+  <script>
+    // Easter egg: tap the profile photo 5 times to find a hidden page
+    (function () {
+      const photo = document.getElementById('bio-photo');
+      const counter = document.getElementById('egg-counter');
+      if (!photo || !counter) return;
+      const EGG_TAPS = 5;
+      let taps = 0;
+      let resetTimer = null;
+
+      photo.addEventListener('click', function () {
+        taps++;
+        photo.classList.remove('egg-shake');
+        // restart animation even on rapid repeat clicks
+        void photo.offsetWidth;
+        photo.classList.add('egg-shake');
+
+        counter.textContent = taps + '/' + EGG_TAPS;
+        counter.classList.add('show');
+
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          taps = 0;
+          counter.classList.remove('show');
+        }, 1500);
+
+        if (taps >= EGG_TAPS) {
+          clearTimeout(resetTimer);
+          taps = 0;
+          window.location.href = 'aurora.html';
+        }
+      });
+
+      photo.addEventListener('animationend', function () {
+        photo.classList.remove('egg-shake');
+      });
+    })();
+  </script>
 
 </body>
 </html>
