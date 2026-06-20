@@ -98,6 +98,15 @@
     }
     .pong-replay:hover { border-color: var(--green); color: #8dd47a; }
     .pong-replay.show { display: inline-block; }
+
+    .egg-back {
+      margin-top: 22px;
+      font-size: 12.5px;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .egg-back:hover { color: var(--green); }
   </style>
 </head>
 <body>
@@ -119,6 +128,8 @@
       <div class="pong-overlay-msg" id="pong-msg"></div>
       <button class="pong-replay" id="pong-replay">Play again</button>
     </div>
+
+    <a href="index.html" class="egg-back">← Back home</a>
   </main>
 
   <script>
