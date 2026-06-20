@@ -66,6 +66,13 @@ img { display: block; max-width: 100%; }
   from { opacity: 0; transform: translateX(20px); }
   to   { opacity: 1; transform: translateX(0); }
 }
+@keyframes eggShake {
+  0%, 100% { transform: translateX(0) rotate(0deg); }
+  20%      { transform: translateX(-4px) rotate(-4deg); }
+  40%      { transform: translateX(4px) rotate(4deg); }
+  60%      { transform: translateX(-3px) rotate(-3deg); }
+  80%      { transform: translateX(3px) rotate(3deg); }
+}
 
 /* ---- Layout wrapper ---- */
 .page {
@@ -199,8 +206,37 @@ img { display: block; max-width: 100%; }
   overflow: hidden;
   border: 0.5px solid rgba(90, 175, 122, 0.18);
   transition: border-color 0.3s ease;
+  cursor: pointer;
 }
 .bio-photo:hover { border-color: rgba(90, 175, 122, 0.5); }
+.bio-photo.egg-shake { animation: eggShake 0.35s ease; }
+.bio-photo-wrap {
+  position: relative;
+  flex-shrink: 0;
+}
+.egg-counter {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  min-width: 30px;
+  padding: 3px 6px;
+  border-radius: 8px;
+  background: var(--magenta-bg);
+  border: 0.5px solid var(--magenta-dim);
+  color: var(--magenta);
+  font-size: 10.5px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.2;
+  opacity: 0;
+  transform: scale(0.85);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+}
+.egg-counter.show {
+  opacity: 1;
+  transform: scale(1);
+}
 .bio-photo img {
   width: 100%;
   height: 100%;
@@ -505,32 +541,6 @@ img { display: block; max-width: 100%; }
 .contact-item img { width: 28px; height: 28px; object-fit: contain; border-radius: 4px; }
 .contact-item-name { font-size: 14px; font-weight: 500; color: #b0d0c0; }
 .contact-item-handle { font-size: 12px; color: var(--text-muted); margin-top: 1px; }
-
-/* ---- Guestbook ---- */
-.guestbook {
-  margin-top: 2rem;
-  padding-top: 1.75rem;
-  border-top: 0.5px solid var(--border-faint);
-  animation: fadeInUp 0.6s ease 0.4s both;
-}
-.section-title {
-  font-size: 18px;
-  font-weight: 500;
-  color: var(--text-primary);
-  margin-bottom: 6px;
-}
-.section-subtitle {
-  font-size: 13px;
-  color: var(--text-body);
-  margin-bottom: 1.25rem;
-  line-height: 1.6;
-}
-.guestbook .cusdis-frame {
-  background: var(--bg-card);
-  border: 0.5px solid var(--border);
-  border-radius: 10px;
-  padding: 1.25rem;
-}
 
 /* ---- Footer ---- */
 .site-footer {

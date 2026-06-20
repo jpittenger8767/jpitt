@@ -13,17 +13,6 @@
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
   <script src="weather.js" defer></script>
   <link rel="icon" type="image/png" href="images/favicon.jpg">
-
-  <meta property="og:title" content="Joe Pittenger">
-  <meta property="og:description" content="Aspiring meteorologist, amateur programmer, and FRC robotics enthusiast sharing projects, notes, and weather insights.">
-  <meta property="og:image" content="https://jpittenger8767.github.io/jpitt/images/aurora-banner.jpg">
-  <meta property="og:url" content="https://jpittenger8767.github.io/jpitt/">
-  <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Joe Pittenger">
-  <meta name="twitter:description" content="Aspiring meteorologist, amateur programmer, and FRC robotics enthusiast sharing projects, notes, and weather insights.">
-  <meta name="twitter:image" content="https://jpittenger8767.github.io/jpitt/images/aurora-banner.jpg">
-
 </head>
 <body>
 
@@ -48,8 +37,11 @@
   </div>
 
   <div class="bio-row">
-    <div class="bio-photo">
-      <img src="images/slide1.jpg" alt="Joe Pittenger">
+    <div class="bio-photo-wrap">
+      <div class="bio-photo" id="bio-photo">
+        <img src="images/slide1.jpg" alt="Joe Pittenger">
+      </div>
+      <span class="egg-counter" id="egg-counter"></span>
     </div>
     <div class="bio-text">
       <p>I am an upcoming college freshman at the University of Oklahoma and a future meteorologist. I'm passionate about weather, robotics, and programming — currently expanding my skills and planning to study atmospheric science in college.</p>
@@ -143,6 +135,44 @@
       <a href="contact.html">Contact</a>
     </div>
   </footer>
+  <script>
+    // Easter egg: tap the profile photo 5 times to find a hidden page
+    (function () {
+      const photo = document.getElementById('bio-photo');
+      const counter = document.getElementById('egg-counter');
+      if (!photo || !counter) return;
+      const EGG_TAPS = 5;
+      let taps = 0;
+      let resetTimer = null;
+
+      photo.addEventListener('click', function () {
+        taps++;
+        photo.classList.remove('egg-shake');
+        // restart animation even on rapid repeat clicks
+        void photo.offsetWidth;
+        photo.classList.add('egg-shake');
+
+        counter.textContent = taps + '/' + EGG_TAPS;
+        counter.classList.add('show');
+
+        clearTimeout(resetTimer);
+        resetTimer = setTimeout(() => {
+          taps = 0;
+          counter.classList.remove('show');
+        }, 1500);
+
+        if (taps >= EGG_TAPS) {
+          clearTimeout(resetTimer);
+          taps = 0;
+          window.location.href = 'aurora.html';
+        }
+      });
+
+      photo.addEventListener('animationend', function () {
+        photo.classList.remove('egg-shake');
+      });
+    })();
+  </script>
 
 </body>
 </html>
