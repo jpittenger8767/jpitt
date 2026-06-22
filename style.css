@@ -639,6 +639,33 @@ img { display: block; max-width: 100%; }
 }
 .note-row-card:hover .note-arrow { color: var(--green); transform: translateX(2px); }
 
+/* ---- Note article images ---- */
+.note-image {
+  width: 100%;
+  border-radius: 8px;
+  border: 0.5px solid var(--border);
+  margin: 0.5rem 0;
+  display: block;
+}
+.note-image-caption {
+  font-size: 12px;
+  color: var(--text-muted);
+  margin-top: -0.25rem;
+  margin-bottom: 0.5rem;
+  font-style: italic;
+}
+.note-image-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin: 0.5rem 0;
+}
+.note-image-row .note-image {
+  margin: 0;
+  height: 220px;
+  object-fit: cover;
+}
+
 /* =============================================
    RESPONSIVE
    ============================================= */
@@ -801,6 +828,14 @@ img { display: block; max-width: 100%; }
   .note-arrow { display: none; }
   .note-card-title { font-size: 14.5px; }
   .note-card-excerpt { font-size: 12.5px; }
+
+  /* Note article images */
+  .note-image-row {
+    grid-template-columns: 1fr;
+  }
+  .note-image-row .note-image {
+    height: auto;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
