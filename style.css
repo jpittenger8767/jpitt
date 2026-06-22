@@ -644,12 +644,18 @@ img { display: block; max-width: 100%; }
    ============================================= */
    /* ---- Timeline ---- */
 .timeline-section {
-  max-width: 760px;
-  margin: 0 auto;
-  padding: 0.5rem 1.25rem 3rem;
+  padding: 0.875rem 2rem 1.25rem;
 }
 .timeline-label { text-align: left; margin-bottom: 1.5rem; }
- 
+
+.timeline-card {
+  background: var(--bg-card);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 1.25rem 1.5rem;
+  animation: fadeInUp 0.6s ease both;
+}
+
 .timeline {
   position: relative;
   padding-left: 28px;
@@ -732,7 +738,8 @@ img { display: block; max-width: 100%; }
 }
  
 @media (max-width: 640px) {
-  .timeline-section { padding: 0.5rem 1rem 2.5rem; }
+  .timeline-section { padding: 0.625rem 1rem 1rem; }
+  .timeline-card { padding: 1rem; }
   .timeline-text { max-width: none; }
 }
 
@@ -815,7 +822,7 @@ img { display: block; max-width: 100%; }
   background: var(--bg-card);
   border: 0.5px solid var(--border);
   border-radius: 10px;
-  min-height: 320px;   /* gives the card visual presence even before content loads */
+  min-height: 320px;
 }
 
 #cusdis_thread {
