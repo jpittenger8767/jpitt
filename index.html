@@ -40,7 +40,7 @@
     <img src="images/aurora-banner.jpg" alt="Aurora borealis over Michigan (Photo by Joe Pittenger)">
     <div class="hero-overlay"></div>
     <div class="hero-text">
-      <h1>Welcome! My name is Joe.</h1>
+      <h1>Welcome! Take a look around! | Joseph Pittenger</h1>
       <p>Meteorology · Programming · University of Oklahoma</p>
     </div>
   </div>
@@ -136,6 +136,67 @@
 
   </div>
 
+  <div class="timeline-section">
+    <p class="section-label timeline-label">The journey so far</p>
+    <div class="timeline" id="timeline">
+
+      <div class="timeline-item" tabindex="0">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Fall 2025</div>
+        <div class="timeline-detail">
+          <p class="timeline-title">Started senior year</p>
+          <p class="timeline-text">Began the college application season, with the University of Oklahoma as the top choice for atmospheric science.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item" tabindex="0">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Winter 2025/26</div>
+        <div class="timeline-detail">
+          <p class="timeline-title">Accepted to OU</p>
+          <p class="timeline-text">Committed to studying meteorology at the University of Oklahoma's School of Meteorology.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item" tabindex="0">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Mar – Apr 2026</div>
+        <div class="timeline-detail">
+          <p class="timeline-title">FRC 2026 "REBUILT" season</p>
+          <p class="timeline-text">Sole programmer for FRC Team 8767's swerve-drive robot, building vision-based auto-alignment and pathfinding.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item" tabindex="0">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">April 2026</div>
+        <div class="timeline-detail">
+          <p class="timeline-title">Won prom king</p>
+          <p class="timeline-text">A fun surprise in the middle of robotics season and college decisions.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item" tabindex="0">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Mid-June 2026</div>
+        <div class="timeline-detail">
+          <p class="timeline-title">Rebuilt this site</p>
+          <p class="timeline-text">Migrated from Jekyll to plain HTML, CSS, and JS, and redesigned everything around an aurora-inspired theme.</p>
+        </div>
+      </div>
+
+      <div class="timeline-item" tabindex="0">
+        <div class="timeline-dot"></div>
+        <div class="timeline-date">Summer 2026</div>
+        <div class="timeline-detail">
+          <p class="timeline-title">Preparing for OU</p>
+          <p class="timeline-text">Exploring campus and the School of Meteorology ahead of freshman year this fall.</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
   <footer class="site-footer">
     <span>© 2026 Joseph Pittenger</span>
     <div class="footer-links">
@@ -179,6 +240,22 @@
 
       photo.addEventListener('animationend', function () {
         photo.classList.remove('egg-shake');
+      });
+    })();
+  </script>
+
+  <script>
+    // Timeline: tap-to-toggle for touch devices (hover handles desktop via CSS)
+    (function () {
+      const items = document.querySelectorAll('.timeline-item');
+      if (!items.length) return;
+
+      items.forEach(function (item) {
+        item.addEventListener('click', function (e) {
+          const alreadyActive = item.classList.contains('active');
+          items.forEach(function (i) { i.classList.remove('active'); });
+          if (!alreadyActive) item.classList.add('active');
+        });
       });
     })();
   </script>

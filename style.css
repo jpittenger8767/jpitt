@@ -642,6 +642,100 @@ img { display: block; max-width: 100%; }
 /* =============================================
    RESPONSIVE
    ============================================= */
+   /* ---- Timeline ---- */
+.timeline-section {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0.5rem 1.25rem 3rem;
+}
+.timeline-label { text-align: left; margin-bottom: 1.5rem; }
+ 
+.timeline {
+  position: relative;
+  padding-left: 28px;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 6px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--border);
+}
+ 
+.timeline-item {
+  position: relative;
+  padding-bottom: 1.75rem;
+  cursor: pointer;
+  outline: none;
+}
+.timeline-item:last-child { padding-bottom: 0; }
+ 
+.timeline-dot {
+  position: absolute;
+  left: -28px;
+  top: 4px;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  background: var(--bg-card);
+  border: 1.5px solid var(--green-dim);
+  transition: border-color 0.25s ease, background 0.25s ease, transform 0.25s ease;
+}
+.timeline-item:hover .timeline-dot,
+.timeline-item:focus .timeline-dot,
+.timeline-item.active .timeline-dot {
+  border-color: var(--green);
+  background: var(--green);
+  transform: scale(1.15);
+}
+ 
+.timeline-date {
+  font-size: 12px;
+  color: var(--text-body);
+  letter-spacing: 0.02em;
+  transition: color 0.25s ease;
+}
+.timeline-item:hover .timeline-date,
+.timeline-item:focus .timeline-date,
+.timeline-item.active .timeline-date {
+  color: var(--text-primary);
+}
+ 
+.timeline-detail {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height 0.35s ease, opacity 0.3s ease, margin-top 0.35s ease;
+  margin-top: 0;
+}
+.timeline-item:hover .timeline-detail,
+.timeline-item:focus .timeline-detail,
+.timeline-item.active .timeline-detail {
+  max-height: 140px;
+  opacity: 1;
+  margin-top: 8px;
+}
+ 
+.timeline-title {
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+.timeline-text {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.6;
+  max-width: 480px;
+}
+ 
+@media (max-width: 640px) {
+  .timeline-section { padding: 0.5rem 1rem 2.5rem; }
+  .timeline-text { max-width: none; }
+}
+
 @media (max-width: 640px) {
   html, body { overflow-x: hidden; width: 100%; }
 
