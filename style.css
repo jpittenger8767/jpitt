@@ -252,12 +252,12 @@ img { display: block; max-width: 100%; }
 }
 
 .bio-photo-stretch {
-  width: 100px;        
+  width: 125px;        
   flex-shrink: 0;
   border-radius: 10px;
   overflow: hidden;
   border: 0.5px solid rgba(90, 175, 122, 0.18);
-  max-height: 200px;    /* prevents it stretching to match very long text */
+  max-height: 200px;    
 }
 
 .bio-photo-stretch img {
