@@ -73,46 +73,55 @@ async function fetchWeather() {
 
 // ---- SPC Day 1 outlook text ----
 async function fetchSPCOutlook() {
-  const el = document.getElementById("spc-outlook-content");
-  if (!el) return;
+  const imgEl = document.getElementById("spc-outlook-img");
+  const textEl = document.getElementById("spc-outlook-content");
+  if (!textEl) return;
+
+  // SPC's own Open Graph preview image — no timestamp in the filename, so
+  // it doesn't break every time a new outlook is issued (unlike the
+  // on-page graphic, which is named day1otlk_HHMM.png and changes each
+  // issuance).
+  if (imgEl) {
+    imgEl.src = `https://www.spc.noaa.gov/products/outlook/day1otlk_sm.gif?_=${Date.now()}`;
+    imgEl.alt = "SPC Day 1 Convective Outlook";
+  }
+
   try {
-    const nwsHeaders = { "Accept": "application/ld+json" };
+    const res = await fetch("https://www.spc.noaa.gov/products/outlook/day1otlk.html");
+    if (!res.ok) throw new Error("SPC page fetch failed: " + res.status);
+    const html = await res.text();
 
-    const res = await fetch(
-      "https://api.weather.gov/products/types/SWODY1/locations/KWNS",
-      { headers: nwsHeaders }
-    );
-    if (!res.ok) throw new Error("SPC product list failed: " + res.status);
-    const data = await res.json();
+    // The forecast discussion sits in a plain <pre> tag — grab it directly
+    // instead of walking the whole page's text.
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const pre = doc.querySelector("pre");
+    if (!pre) throw new Error("Could not find outlook <pre> block");
 
-    const list = data["@graph"] || data.features || (Array.isArray(data) ? data : null);
-    const latest = list?.[0];
-    if (!latest) {
-      console.error("Unexpected SPC product list shape:", data);
-      throw new Error("No outlook found");
-    }
+    let raw = pre.textContent || "";
 
-    const productUrl = latest["@id"] || latest.id;
-    if (!productUrl) throw new Error("No product URL in list entry");
+    // Start at the risk-level line (e.g. "...THERE IS A SLIGHT RISK...")
+    // to skip past the header/date stamp, which isn't useful content.
+    const startIdx = raw.indexOf("...THERE IS");
+    if (startIdx !== -1) raw = raw.slice(startIdx);
 
-    const prodRes = await fetch(productUrl, { headers: nwsHeaders });
-    if (!prodRes.ok) throw new Error("SPC product fetch failed: " + prodRes.status);
-    const prod = await prodRes.json();
+    // Cut off the "CLICK TO GET..." / "NOTE: THE NEXT..." trailer text.
+    const trailerIdx = raw.indexOf("CLICK TO GET");
+    if (trailerIdx !== -1) raw = raw.slice(0, trailerIdx);
 
-    // Grab just the first two paragraphs of the text
-    const raw = prod.productText || "";
     const clean = raw
-      .replace(/\r/g, "")
-      .split("\n\n")
-      .filter(p => p.trim().length > 40)   // skip short header lines
+      .split(/\n\s*\n/)
+      .map(p => p.replace(/\s+/g, " ").trim())
+      .filter(p => p.length > 40)
       .slice(0, 3)
       .join("\n\n")
       .trim();
 
-    el.innerHTML = `<p class="wx-outlook-text">${clean.replace(/\n\n/g, "</p><p class='wx-outlook-text'>")}</p>`;
+    if (!clean) throw new Error("No outlook text after parsing");
+
+    textEl.innerHTML = `<p class="wx-outlook-text">${clean.replace(/\n\n/g, "</p><p class='wx-outlook-text'>")}</p>`;
   } catch (err) {
     console.error("SPC outlook error:", err);
-    el.innerHTML = `<p class="wx-loading">Outlook unavailable — <a href="https://www.spc.noaa.gov/products/outlook/day1otlk.html" target="_blank" rel="noopener">view on SPC</a></p>`;
+    textEl.innerHTML = `<p class="wx-loading">Outlook unavailable — <a href="https://www.spc.noaa.gov/products/outlook/day1otlk.html" target="_blank" rel="noopener">view on SPC</a></p>`;
   }
 }
 
