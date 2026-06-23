@@ -76,15 +76,27 @@ async function fetchSPCOutlook() {
   const el = document.getElementById("spc-outlook-content");
   if (!el) return;
   try {
-    // NWS products API — SPC Day 1 convective outlook (product type: SWODY1)
-    const res = await fetch("https://api.weather.gov/products/types/SWODY1/locations/KWNS");
-    if (!res.ok) throw new Error("SPC product list failed");
-    const data = await res.json();
-    const latest = data["@graph"]?.[0];
-    if (!latest) throw new Error("No outlook found");
+    const nwsHeaders = { "Accept": "application/ld+json" };
 
-    const prodRes = await fetch(latest["@id"]);
-    if (!prodRes.ok) throw new Error("SPC product fetch failed");
+    const res = await fetch(
+      "https://api.weather.gov/products/types/SWODY1/locations/KWNS",
+      { headers: nwsHeaders }
+    );
+    if (!res.ok) throw new Error("SPC product list failed: " + res.status);
+    const data = await res.json();
+
+    const list = data["@graph"] || data.features || (Array.isArray(data) ? data : null);
+    const latest = list?.[0];
+    if (!latest) {
+      console.error("Unexpected SPC product list shape:", data);
+      throw new Error("No outlook found");
+    }
+
+    const productUrl = latest["@id"] || latest.id;
+    if (!productUrl) throw new Error("No product URL in list entry");
+
+    const prodRes = await fetch(productUrl, { headers: nwsHeaders });
+    if (!prodRes.ok) throw new Error("SPC product fetch failed: " + prodRes.status);
     const prod = await prodRes.json();
 
     // Grab just the first two paragraphs of the text
@@ -100,7 +112,7 @@ async function fetchSPCOutlook() {
     el.innerHTML = `<p class="wx-outlook-text">${clean.replace(/\n\n/g, "</p><p class='wx-outlook-text'>")}</p>`;
   } catch (err) {
     console.error("SPC outlook error:", err);
-    el.innerHTML = `<p class="wx-loading">Outlook unavailable — <a href="https://www.spc.noaa.gov/products/outlook/" target="_blank" rel="noopener">view on SPC</a></p>`;
+    el.innerHTML = `<p class="wx-loading">Outlook unavailable — <a href="https://www.spc.noaa.gov/products/outlook/day1otlk.html" target="_blank" rel="noopener">view on SPC</a></p>`;
   }
 }
 
