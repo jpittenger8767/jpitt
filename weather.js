@@ -77,19 +77,25 @@ async function fetchSPCOutlook() {
   const textEl = document.getElementById("spc-outlook-content");
   if (!textEl) return;
 
-  // SPC's own Open Graph preview image — no timestamp in the filename, so
-  // it doesn't break every time a new outlook is issued (unlike the
-  // on-page graphic, which is named day1otlk_HHMM.png and changes each
-  // issuance).
-  if (imgEl) {
-    imgEl.src = `https://www.spc.noaa.gov/products/outlook/day1otlk_sm.gif?_=${Date.now()}`;
-    imgEl.alt = "SPC Day 1 Convective Outlook";
-  }
-
   try {
     const res = await fetch("https://www.spc.noaa.gov/products/outlook/day1otlk.html");
     if (!res.ok) throw new Error("SPC page fetch failed: " + res.status);
     const html = await res.text();
+
+    // The page sets its image dynamically via show_tab('otlk_HHMM'), where
+    // HHMM is the current issuance time (changes every new outlook — 0100,
+    // 0600, 1200, 1630, etc.). There's no static filename to hardcode, so
+    // pull the real current suffix straight out of the page's onload call.
+    if (imgEl) {
+      const suffixMatch = html.match(/show_tab\('otlk_(\d{4})'\)/);
+      if (suffixMatch) {
+        const suffix = suffixMatch[1];
+        imgEl.src = `https://www.spc.noaa.gov/products/outlook/day1otlk_${suffix}.png?_=${Date.now()}`;
+        imgEl.alt = "SPC Day 1 Convective Outlook";
+      } else {
+        console.error("Could not find current SPC outlook image suffix");
+      }
+    }
 
     // The forecast discussion sits in a plain <pre> tag — grab it directly
     // instead of walking the whole page's text.
