@@ -171,7 +171,7 @@
       ball.x = W / 2;
       ball.y = H / 2;
       const angle = (Math.random() * 0.5 - 0.25) * Math.PI;
-      const speed = 4;
+      const speed = 8;
       ball.vx = Math.cos(angle) * speed * direction;
       ball.vy = Math.sin(angle) * speed;
       trail = [];
@@ -270,7 +270,7 @@
       }
 
       // Cap speed so it doesn't spiral out of control
-      const maxSpeed = 11;
+      const maxSpeed = 19;
       const sp = Math.hypot(ball.vx, ball.vy);
       if (sp > maxSpeed) {
         ball.vx = (ball.vx / sp) * maxSpeed;
