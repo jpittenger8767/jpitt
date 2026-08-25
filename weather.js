@@ -73,34 +73,61 @@ async function fetchWeather() {
 
 // ---- SPC Day 1 outlook text ----
 async function fetchSPCOutlook() {
-  const el = document.getElementById("spc-outlook-content");
-  if (!el) return;
+  const imgEl = document.getElementById("spc-outlook-img");
+  const textEl = document.getElementById("spc-outlook-content");
+  if (!textEl) return;
+
   try {
-    // NWS products API — SPC Day 1 convective outlook (product type: SWODY1)
-    const res = await fetch("https://api.weather.gov/products/types/SWODY1/locations/KWNS");
-    if (!res.ok) throw new Error("SPC product list failed");
-    const data = await res.json();
-    const latest = data["@graph"]?.[0];
-    if (!latest) throw new Error("No outlook found");
+    const res = await fetch("https://www.spc.noaa.gov/products/outlook/day1otlk.html");
+    if (!res.ok) throw new Error("SPC page fetch failed: " + res.status);
+    const html = await res.text();
 
-    const prodRes = await fetch(latest["@id"]);
-    if (!prodRes.ok) throw new Error("SPC product fetch failed");
-    const prod = await prodRes.json();
+    // The page sets its image dynamically via show_tab('otlk_HHMM'), where
+    // HHMM is the current issuance time (changes every new outlook — 0100,
+    // 0600, 1200, 1630, etc.). There's no static filename to hardcode, so
+    // pull the real current suffix straight out of the page's onload call.
+    if (imgEl) {
+      const suffixMatch = html.match(/show_tab\('otlk_(\d{4})'\)/);
+      if (suffixMatch) {
+        const suffix = suffixMatch[1];
+        imgEl.src = `https://www.spc.noaa.gov/products/outlook/day1otlk_${suffix}.png?_=${Date.now()}`;
+        imgEl.alt = "SPC Day 1 Convective Outlook";
+      } else {
+        console.error("Could not find current SPC outlook image suffix");
+      }
+    }
 
-    // Grab just the first two paragraphs of the text
-    const raw = prod.productText || "";
+    // The forecast discussion sits in a plain <pre> tag — grab it directly
+    // instead of walking the whole page's text.
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    const pre = doc.querySelector("pre");
+    if (!pre) throw new Error("Could not find outlook <pre> block");
+
+    let raw = pre.textContent || "";
+
+    // Start at the risk-level line (e.g. "...THERE IS A SLIGHT RISK...")
+    // to skip past the header/date stamp, which isn't useful content.
+    const startIdx = raw.indexOf("...THERE IS");
+    if (startIdx !== -1) raw = raw.slice(startIdx);
+
+    // Cut off the "CLICK TO GET..." / "NOTE: THE NEXT..." trailer text.
+    const trailerIdx = raw.indexOf("CLICK TO GET");
+    if (trailerIdx !== -1) raw = raw.slice(0, trailerIdx);
+
     const clean = raw
-      .replace(/\r/g, "")
-      .split("\n\n")
-      .filter(p => p.trim().length > 40)   // skip short header lines
+      .split(/\n\s*\n/)
+      .map(p => p.replace(/\s+/g, " ").trim())
+      .filter(p => p.length > 40)
       .slice(0, 3)
       .join("\n\n")
       .trim();
 
-    el.innerHTML = `<p class="wx-outlook-text">${clean.replace(/\n\n/g, "</p><p class='wx-outlook-text'>")}</p>`;
+    if (!clean) throw new Error("No outlook text after parsing");
+
+    textEl.innerHTML = `<p class="wx-outlook-text">${clean.replace(/\n\n/g, "</p><p class='wx-outlook-text'>")}</p>`;
   } catch (err) {
     console.error("SPC outlook error:", err);
-    el.innerHTML = `<p class="wx-loading">Outlook unavailable — <a href="https://www.spc.noaa.gov/products/outlook/" target="_blank" rel="noopener">view on SPC</a></p>`;
+    textEl.innerHTML = `<p class="wx-loading">Outlook unavailable — <a href="https://www.spc.noaa.gov/products/outlook/day1otlk.html" target="_blank" rel="noopener">view on SPC</a></p>`;
   }
 }
 
