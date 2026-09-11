@@ -344,6 +344,12 @@ img { display: block; max-width: 100%; }
   min-width: 0;
 }
 
+/* ---- Resume card ---- */
+.resume-card {
+  grid-column: span 2;
+  animation-delay: 0.7s;
+}
+
 /* ---- Weather slideshow header ---- */
 .wx-slide-header {
   display: flex;
@@ -790,6 +796,7 @@ img { display: block; max-width: 100%; }
   /* Home grid — single column */
   .home-content { padding: 0.875rem 1rem; grid-template-columns: 1fr; }
   .weather-card { grid-column: span 1; }
+  .resume-card { grid-column: span 1; }
 
   /* Weather row stacks on mobile:
      stats in a 2-col grid, radar full width below */
