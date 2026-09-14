@@ -1,11 +1,11 @@
-const LAT = 43.3370;
+const LAT = 43.337;
 const LON = -83.3525;
 let radarMapInstance = null;
 
 const SLIDE_LABELS = [
   "Current conditions — Mayville, MI",
   "SPC Day 1 Convective Outlook",
-  "Active Alerts — Michigan"
+  "Active Alerts — Michigan",
 ];
 const SLIDE_INTERVAL = 10000;
 let currentSlide = 0;
@@ -25,7 +25,7 @@ async function fetchWeather() {
 
     const [forecastRes, stationRes] = await Promise.all([
       fetch(gridData.properties.forecast),
-      fetch(gridData.properties.observationStations)
+      fetch(gridData.properties.observationStations),
     ]);
 
     const forecastData = await forecastRes.json();
@@ -35,34 +35,59 @@ async function fetchWeather() {
     if (!stationData.features?.length) throw new Error("No stations returned");
 
     const stationId = stationData.features[0].properties.stationIdentifier;
-    const obsRes = await fetch(`https://api.weather.gov/stations/${stationId}/observations/latest`);
+    const obsRes = await fetch(
+      `https://api.weather.gov/stations/${stationId}/observations/latest`,
+    );
 
-    let tempF = "--", shortForecast = currentForecast?.shortForecast ?? "--", windString = "N/A";
+    let tempF = "--",
+      shortForecast = currentForecast?.shortForecast ?? "--",
+      windString = "N/A";
 
     if (obsRes.ok) {
       const props = (await obsRes.json()).properties;
       if (props.temperature?.value != null) {
-        tempF = (props.temperature.value * 9/5 + 32).toFixed(1) + "°F";
+        tempF = ((props.temperature.value * 9) / 5 + 32).toFixed(1) + "°F";
       } else if (currentForecast?.temperature != null) {
         tempF = `${currentForecast.temperature}°F`;
       }
       if (props.windSpeed?.value != null) {
         const mph = (props.windSpeed.value * 2.237).toFixed(0);
-        const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE","S","SSW","SW","WSW","W","WNW","NW","NNW"];
-        const dir = props.windDirection?.value != null ? dirs[Math.round(props.windDirection.value / 22.5) % 16] : "";
+        const dirs = [
+          "N",
+          "NNE",
+          "NE",
+          "ENE",
+          "E",
+          "ESE",
+          "SE",
+          "SSE",
+          "S",
+          "SSW",
+          "SW",
+          "WSW",
+          "W",
+          "WNW",
+          "NW",
+          "NNW",
+        ];
+        const dir =
+          props.windDirection?.value != null
+            ? dirs[Math.round(props.windDirection.value / 22.5) % 16]
+            : "";
         windString = `${mph} mph ${dir}`.trim();
       } else if (currentForecast?.windSpeed) {
-        windString = `${currentForecast.windSpeed} ${currentForecast.windDirection ?? ""}`.trim();
+        windString =
+          `${currentForecast.windSpeed} ${currentForecast.windDirection ?? ""}`.trim();
       }
     } else if (currentForecast) {
       tempF = `${currentForecast.temperature}°F`;
-      windString = `${currentForecast.windSpeed} ${currentForecast.windDirection ?? ""}`.trim();
+      windString =
+        `${currentForecast.windSpeed} ${currentForecast.windDirection ?? ""}`.trim();
     }
 
     if (tempEl) tempEl.textContent = tempF;
     if (descEl) descEl.textContent = shortForecast;
     if (windEl) windEl.textContent = windString;
-
   } catch (err) {
     console.error("Weather fetch error:", err);
     if (tempEl) tempEl.textContent = "Unavailable";
@@ -78,7 +103,9 @@ async function fetchSPCOutlook() {
   if (!textEl) return;
 
   try {
-    const res = await fetch("https://www.spc.noaa.gov/products/outlook/day1otlk.html");
+    const res = await fetch(
+      "https://www.spc.noaa.gov/products/outlook/day1otlk.html",
+    );
     if (!res.ok) throw new Error("SPC page fetch failed: " + res.status);
     const html = await res.text();
 
@@ -116,8 +143,8 @@ async function fetchSPCOutlook() {
 
     const clean = raw
       .split(/\n\s*\n/)
-      .map(p => p.replace(/\s+/g, " ").trim())
-      .filter(p => p.length > 40)
+      .map((p) => p.replace(/\s+/g, " ").trim())
+      .filter((p) => p.length > 40)
       .slice(0, 3)
       .join("\n\n")
       .trim();
@@ -146,20 +173,22 @@ async function fetchAlerts() {
       return;
     }
 
-    const severityClass = s => {
-      if (s === "Extreme")  return "alert-extreme";
-      if (s === "Severe")   return "alert-severe";
+    const severityClass = (s) => {
+      if (s === "Extreme") return "alert-extreme";
+      if (s === "Severe") return "alert-severe";
       return "alert-moderate";
     };
 
-    el.innerHTML = alerts.slice(0, 4).map(a => {
-      const p = a.properties;
-      return `<div class="wx-alert-item ${severityClass(p.severity)}">
+    el.innerHTML = alerts
+      .slice(0, 4)
+      .map((a) => {
+        const p = a.properties;
+        return `<div class="wx-alert-item ${severityClass(p.severity)}">
         <span class="wx-alert-event">${p.event}</span>
         <p class="wx-alert-headline">${p.headline ?? p.description?.substring(0, 120) + "…" ?? ""}</p>
       </div>`;
-    }).join("");
-
+      })
+      .join("");
   } catch (err) {
     console.error("Alerts error:", err);
     el.innerHTML = `<p class="wx-loading">Unable to load alerts.</p>`;
@@ -174,19 +203,23 @@ function initRadarMap() {
   const slide0 = document.getElementById("wx-slide-0");
   if (slide0) slide0.classList.add("active");
 
-  radarMapInstance = L.map("radar-map", { zoomControl: false, attributionControl: false })
-    .setView([LAT, LON], 7);
+  radarMapInstance = L.map("radar-map", {
+    zoomControl: false,
+    attributionControl: false,
+  }).setView([LAT, LON], 7);
 
   L.tileLayer("https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", {
-    maxZoom: 10
+    maxZoom: 10,
   }).addTo(radarMapInstance);
 
-  L.tileLayer.wms("https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows?", {
-    layers: "conus_bref_qcd",
-    format: "image/png",
-    transparent: true,
-    opacity: 0.7
-  }).addTo(radarMapInstance);
+  L.tileLayer
+    .wms("https://opengeo.ncep.noaa.gov/geoserver/conus/conus_bref_qcd/ows?", {
+      layers: "conus_bref_qcd",
+      format: "image/png",
+      transparent: true,
+      opacity: 0.7,
+    })
+    .addTo(radarMapInstance);
 }
 
 // ---- Slideshow ----
@@ -214,7 +247,7 @@ function startTimer() {
 }
 
 function initSlideshow() {
-  document.querySelectorAll(".wx-dot").forEach(dot => {
+  document.querySelectorAll(".wx-dot").forEach((dot) => {
     dot.addEventListener("click", () => {
       goToSlide(parseInt(dot.dataset.slide));
       startTimer();
@@ -226,7 +259,10 @@ function initSlideshow() {
     pauseBtn.addEventListener("click", () => {
       paused = !paused;
       pauseBtn.innerHTML = paused ? "&#9654;" : "&#10074;&#10074;";
-      pauseBtn.setAttribute("aria-label", paused ? "Resume slideshow" : "Pause slideshow");
+      pauseBtn.setAttribute(
+        "aria-label",
+        paused ? "Resume slideshow" : "Pause slideshow",
+      );
     });
   }
 
@@ -241,10 +277,15 @@ document.addEventListener("DOMContentLoaded", () => {
   fetchAlerts();
   initSlideshow();
   setInterval(fetchWeather, 300000);
-  setInterval(() => { fetchSPCOutlook(); fetchAlerts(); }, 600000);
+  setInterval(() => {
+    fetchSPCOutlook();
+    fetchAlerts();
+  }, 600000);
 });
 
 window.addEventListener("load", () => {
   initRadarMap();
-  setTimeout(() => { if (radarMapInstance) radarMapInstance.invalidateSize(); }, 200);
+  setTimeout(() => {
+    if (radarMapInstance) radarMapInstance.invalidateSize();
+  }, 200);
 });
