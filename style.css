@@ -382,6 +382,15 @@ img {
   border-color: #6a2a5a;
   color: #d898c8;
 }
+.tag.blue {
+  border-color: #006DA8;
+  color: #1A95D6;
+  background: #0A1924;
+}
+.tag.blue:hover {
+  border-color:#006DA8;
+  color: #6AB1E6;
+}
 
 /* ---- Section label ---- */
 .section-label {
